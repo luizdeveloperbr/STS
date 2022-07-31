@@ -17,8 +17,6 @@ function VendaColunaConfirmado({ venda }) {
     }
 
     return (
-        <>{
-            venda.confirmado ?
                 <div className="flex justify-start" id="c">
                     <div className="footer w-[150px]">
                         <DataParsed timestamp={venda.datetime} format="DD/MM/YYYY" />
@@ -37,9 +35,7 @@ function VendaColunaConfirmado({ venda }) {
                             <a className="button mx-1 hover:cursor-pointer" onClick={() => deletarVenda(venda.id)}>X</a>
                         </div>
                     </form>
-                </div> : <></>
-        }
-        </>
+                </div>
     )
 }
 export default VendaColunaConfirmado
