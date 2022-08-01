@@ -16,7 +16,6 @@ export async function listarVendas(id, coluna, valor, setState) {
         });
         setState(arrayDocs)
     }
-
 }
 
 export function getTotal(array, prop, setstate) {

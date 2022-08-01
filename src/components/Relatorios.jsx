@@ -1,173 +1,90 @@
 import React, { useEffect, useState } from 'react';
 import { listarVendas, getTotal, getTotalCusto } from '../firebase/controller';
 import Real from './ComponentReal';
-// import { db } from "../firebase"
-// import { getDoc, doc } from "firebase/firestore"
+import moment from 'moment';
 
 function Relatorios(prop) {
-  // state INPUT meses *comparativo*
-  const [mes1, setMes1] = useState('');
-  const [mes2, setMes2] = useState('');
   const [tipo, setTipo] = useState('');
+  const [listaMes, setListaMes] = useState([]);
 
-  //LISTA de cada mes *comparativo*
-  const [listaM1, setListaM1] = useState([]);
-  const [listaM2, setListaM2] = useState([]);
+  const [totalQuantidadeMes, setTotalQuantidadeMes] = useState(0);
+  const [totalVendasMes, setTotalVendasMes] = useState(0);
+  const [totalCustoMes, setTotalCustoMes] = useState(0);
 
-  //   ** TOTAIS **
-  const [totalQuantidadeM1, setTotalQuantidadeM1] = useState(0);
-  const [totalQuantidadeM2, setTotalQuantidadeM2] = useState(0);
+  const [totalVendasTipo, setTotalVendasTipo] = useState(0);
+  const [totalQuantidadeTipo, setTotalQuantidadeTipo] = useState(0);
+  const [totalCustoTipo, setTotalCustoTipo] = useState(0);
 
-  const [totalVendasT1, setTotalVendasT1] = useState(0);
-  const [totalQuantidadeT1, setTotalQuantidadeT1] = useState(0);
-  const [totalCustoT1, setTotalCustoT1] = useState(0);
 
-  const [totalVendasM1, setTotalVendasM1] = useState(0);
-  const [totalVendasM2, setTotalVendasM2] = useState(0);
 
-  const [totalCustoM1, setTotalCustoM1] = useState(0);
-  const [totalCustoM2, setTotalCustoM2] = useState(0);
-  //    ** LUCRO **
-  const lucro1 = totalVendasM1 - totalCustoM1;
-  const lucro2 = totalVendasM2 - totalCustoM2;
-
-  const filterT = listaM1.filter((vnd) => vnd.tipo === tipo);
-
-  // function filtarTipo(lista, tipo, setstate) {
-  //     const result = lista.filter(vnd => vnd.tipo === tipo)
-  //     getTotal(result,"valorVenda",setstate)
-  // }
-
-  // const [bancos, setBancos] = useState([]);
-  // const [banco, setBanco] = useState([]);
-
-  // async function getBancos() {
-  //     const docRef = await getDoc(doc(db, "config", "bancos"))
-  //     setBancos(docRef.get("listBancos"))
-  // }
-  useEffect(() => {
-    listarVendas(prop.collection, 'mes', mes1, setListaM1);
-  }, [mes1]);
+  const filtrarPorTipo = listaMes.filter((venda) => venda.tipo === tipo);
 
   useEffect(() => {
-    getTotal(filterT, 'quantidade', setTotalQuantidadeT1);
-    getTotal(filterT, 'valorVenda', setTotalVendasT1);
-    getTotalCusto(filterT, setTotalCustoT1);
+    const queryMes = moment(prop.mes, "MMMM").format("YYYY-MM")
+    listarVendas(prop.collection, 'mes', queryMes, setListaMes);
+  }, [prop.update]);
+
+  useEffect(() => {
+    getTotal(filtrarPorTipo, 'quantidade', setTotalQuantidadeTipo);
+    getTotal(filtrarPorTipo, 'valorVenda', setTotalVendasTipo);
+    getTotalCusto(filtrarPorTipo, setTotalCustoTipo);
   }, [tipo]);
 
   useEffect(() => {
-    getTotal(listaM1, 'quantidade', setTotalQuantidadeM1);
-    getTotal(listaM1, 'valorVenda', setTotalVendasM1);
-    getTotalCusto(listaM1, setTotalCustoM1);
-  }, [listaM1]);
-
-  useEffect(() => {
-    listarVendas(prop.collection, 'mes', mes2, setListaM2);
-  }, [mes2]);
-
-  useEffect(() => {
-    getTotal(listaM2, 'quantidade', setTotalQuantidadeM2);
-    getTotal(listaM2, 'valorVenda', setTotalVendasM2);
-    getTotalCusto(listaM2, setTotalCustoM2);
-  }, [listaM2]);
+    getTotal(listaMes, 'quantidade', setTotalQuantidadeMes);
+    getTotal(listaMes, 'valorVenda', setTotalVendasMes);
+    getTotalCusto(listaMes, setTotalCustoMes);
+  }, [listaMes]);
 
   return (
-    <div>
-      {/* <select className="form-input" onInput={(e) => setBanco(e.target.value)}>
-                <option value="">Todos</option>
-                {bancos.map((banco) => {
-                    return (<option value={banco} key={banco}>{banco}</option>)
-                })}
-            </select> */}
-      <table>
-        <thead>
-          <tr>
-            <th>
-              <a className="button mr-1 py-0" onClick={() => setTipo('R')}>
-                R
-              </a>
-              <a className="button ml-1 py-0" onClick={() => setTipo('N')}>
-                N
-              </a>
-              <a className="button ml-1 py-0" onClick={() => setTipo("")}>
-                Ambos
-              </a>
-            </th>
-            <th>Quantidade</th>
-            <th>Venda {tipo} </th>
-            <th>Custo {tipo}</th>
-            <th>Lucro {tipo}</th>
-          </tr>
-        </thead>
-        <tbody id="tabela-relatorio">
-          <tr>
-            <td>
-              <input
-                type="month"
-                className="pl-2 form-input"
-                onInput={(e) => setMes1(e.target.value)}
-              />
-            </td>
-            <td>
-              {tipo === "" ? totalQuantidadeM1 : totalQuantidadeT1}
-            </td>
-            <td className="px-2">
-              {tipo === "" ? (
-                <Real valor={totalVendasM1} />
-              ) : (
-                <Real valor={totalVendasT1} />
-              )}
-            </td>
-            <td className="px-2">
-              {tipo === "" ? (
-                <Real valor={totalCustoM1} />
-              ) : (
-                <Real valor={totalCustoT1} />
-              )}
-            </td>
-            <td className="px-2">
-              {tipo === "" ? (
-                <Real valor={totalVendasM1 - totalCustoM1} />
-              ) : (
-                <Real valor={totalVendasT1 - totalCustoT1} />
-              )}
-            </td>
-          </tr>
-          {/* <tr>
-            <td>
-              <input
-                type="month"
-                className="pl-2 form-input"
-                onInput={(e) => setMes2(e.target.value)}
-              />
-            </td>
-            <td>{totalQuantidadeM2}</td>
-            <td className="px-2">
-              <Real valor={totalVendasM2} />
-            </td>
-            <td className="px-2">
-              <Real valor={totalCustoM2} />
-            </td>
-            <td className="px-2">
-              <Real valor={totalVendasM2 - totalCustoM2} />
-            </td>
-         </tr>*/}
-          <tr>
-            <td></td>
-            <td>{totalQuantidadeM1 + totalQuantidadeM2}</td>
-            <td className="px-2">
-              <Real valor={totalVendasM1 + totalVendasM2} />
-            </td>
-            <td className="px-2">
-              <Real valor={totalCustoM1 + totalCustoM2} />
-            </td>
-            <td className="px-2">
-              <Real valor={lucro1 + lucro2} />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <>{totalQuantidadeMes === 0 ? 
+      <></> :
+      <tbody id="tabela-relatorio">
+      <tr>
+        <td>
+          <a className="capitalize mx-1 py-0 hover:cursor-pointer" onClick={() => setTipo("")}>
+            {prop.mes}
+          </a>
+
+        </td>
+        <td>
+          <a className="button mx-1 py-0 hover:cursor-pointer" onClick={() => setTipo('R')}>
+            R
+          </a>
+        </td>
+        <td>
+          <a className="button mx-1 py-0 hover:cursor-pointer" onClick={() => setTipo('N')}>
+            N
+          </a>
+        </td>
+        <td>
+          {tipo === "" ? totalQuantidadeMes : totalQuantidadeTipo}
+        </td>
+        <td className="px-2">
+          {tipo === "" ? (
+            <Real valor={totalVendasMes} />
+          ) : (
+            <Real valor={totalVendasTipo} />
+          )}
+        </td>
+        <td className="px-2">
+          {tipo === "" ? (
+            <Real valor={totalCustoMes} />
+          ) : (
+            <Real valor={totalCustoTipo} />
+          )}
+        </td>
+        <td className="px-2">
+          {tipo === "" ? (
+            <Real valor={totalVendasMes - totalCustoMes} />
+          ) : (
+            <Real valor={totalVendasTipo - totalCustoTipo} />
+          )}
+        </td>
+      </tr>
+    </tbody>
+    }</>
+
   );
 }
 export default Relatorios;

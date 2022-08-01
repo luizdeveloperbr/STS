@@ -18,7 +18,7 @@ import { Form, Formik, Field } from 'formik';
 moment.updateLocale('pt-BR', ptBR);
 
 function Dashboard() {
-  const [reload,setReload] = useState(true)
+  const [reload, setReload] = useState(true)
   const [listaDeVendas, setListaDeVendas] = useState([]);
   const [listaDeVendasNot, setListaDeVendasNot] = useState([]);
   const { logOut, user } = useUserAuth();
@@ -47,7 +47,7 @@ function Dashboard() {
     const docRef = doc(collection(db, user.uid));
     const mesSubmit = moment(values.datetime, 'YYYY-MM-DD').format('YYYY-MM');
     await setDoc(docRef, { ...values, mes: mesSubmit });
-    listarVendas(user.uid, 'mes', '', setListaDeVendas, setListaDeVendasNot);
+    listarVendas(user.uid, 'mes', "", setListaDeVendas, setListaDeVendasNot);
   }
 
   async function handleSignOut() {
@@ -56,7 +56,7 @@ function Dashboard() {
   }
 
   useEffect(() => {
-    listarVendas(user.uid, 'mes', '', setListaDeVendas, setListaDeVendasNot);
+    listarVendas(user.uid, "mes", "", setListaDeVendas, setListaDeVendasNot);
   }, [reload]);
 
   return (
@@ -85,7 +85,7 @@ function Dashboard() {
         onSubmit={novoRegistro}
       >
         {({ isSubmitting }) => (
-          <Form className="mx-auto flex overflow-x-auto">
+          <Form className="w-full flex">
             <label className="m-1 grid text-sm" htmlFor="datetime">
               Data
               <Field
@@ -133,15 +133,33 @@ function Dashboard() {
               <button type="reset" className="button mx-1">
                 Limpar
               </button>
-              <a onClick={()=> setReload(!reload)} type="reset" className="button mx-1">
-              (*)
+              <a onClick={() => setReload(!reload)} className="p-2 reload hover:cursor-pointer">
               </a>
             </div>
           </Form>
         )}
       </Formik>
       <TabelaVendas completa={listaDeVendas} incompleta={listaDeVendasNot} />
-      <Relatorios collection={user.uid} />
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th>Quantidade</th>
+            <th>Venda </th>
+            <th>Custo</th>
+            <th>Lucro</th>
+          </tr>
+        </thead>
+        {
+          moment.months().map(mes => {
+            return (
+              <Relatorios key={mes} update={reload} collection={user.uid} mes={mes} />
+            )
+          })
+        }
+      </table>
     </div>
   );
 }

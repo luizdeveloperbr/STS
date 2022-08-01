@@ -5,10 +5,6 @@ import { useNavigate } from 'react-router-dom'
 
 const AuthContext = createContext()
 
-//export function useAuth() {
-//  return useContext(AuthContext)
-//}
-
 export function AuthProvider({ children }) {
   const [user, setUser] = useState({})
   const [error, setError] = useState("")
@@ -47,18 +43,6 @@ export function AuthProvider({ children }) {
   function logOut() {
     return signOut(auth)
   }
-
-  // function resetPassword(email) {
-  //   return auth.sendPasswordResetEmail(email)
-  // }
-  //
-  // function updateEmail(email) {
-  //   return currentUser.updateEmail(email)
-  // }
-  //
-  // function updatePassword(password) {
-  //   return currentUser.updatePassword(password)
-  // }
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, currentUser => {

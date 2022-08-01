@@ -78,6 +78,7 @@ function VendaColuna(prop) {
                   className="form-input max-w-[80px]"
                   type="number"
                   placeholder="Qnt."
+                  // value={prop.venda.quantidade}
                 ></Field>
               </div>
               <div className="border border-black text-center">
@@ -110,19 +111,11 @@ function VendaColuna(prop) {
                   <input className="scale-150" type="checkbox" disabled />
                 )}
               </div>
-              <div className="w-[110px] pt-1 border border-black text-center">
+              <div className="w-[110px] justify-evenly flex p-1 border border-black text-center">
                 <a
-                  className="button mx-1 hover:cursor-pointer bg-blue-600"
+                  className="p-2 block min-w-[25px] rounded delete border border-black hover:cursor-pointer"
                   onClick={() => deletarVenda(prop.venda.id)}
-                >
-                  E
-                </a>
-                <a
-                  className="button mx-1 hover:cursor-pointer"
-                  onClick={() => deletarVenda(prop.venda.id)}
-                >
-                  X
-                </a>
+                ></a>
               </div>
             </Form>
           </>
