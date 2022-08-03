@@ -1,6 +1,6 @@
 import React, { useEffect,useState } from 'react'
 import { Formik, Form } from 'formik'
-import { Link,useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useUserAuth } from '../contexts/AuthContext'
 
 const LoginPage = () => {
@@ -12,10 +12,10 @@ const LoginPage = () => {
         logIn(email, password)
     }
     useEffect(() => {
-        if (user !== undefined) {
+        if (user !== null) {
             navigate("/dashboard")
         }
-    }, [])
+    },[])
     return (
         <div className="page-conteiner">
             <Formik
@@ -44,7 +44,6 @@ const LoginPage = () => {
                                 </div>
                                 <div className="block text-center">
                                     <button type="submit" className="button disabled:bg-red-600" disabled={isSubmitting}>Login</button>
-                                    <Link className="ml-3 hover:text-blue-900 hover:underline" to="/novo">Cadastrar</Link>
                                 </div>
                             </Form>
                         </div>

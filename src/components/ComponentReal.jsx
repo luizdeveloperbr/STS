@@ -1,5 +1,5 @@
-function Real(valorNumero) {
-return valorNumero.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+function Real({ valor }) {
+    return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 }
 
 export default Real;

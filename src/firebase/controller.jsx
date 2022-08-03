@@ -3,8 +3,7 @@ import { db } from "./index"
 
 export async function listarVendas(id, coluna, valor, setState) {
     let colecao
-    if (valor == "") {
-        // colecao = collection(db, id)
+    if (id === undefined) {
         setState([])
     } else {
         colecao = query(collection(db, id), where(coluna, "==", valor))
@@ -27,7 +26,7 @@ export function getTotal(array, prop, setstate) {
     setstate(resultReduce)
 }
 
-export function getTotalCusto(array,setState) {
+export function getTotalCusto(array, setState) {
     let listaCusto = []
     array.forEach((item) => {
         listaCusto.push(item.custoUnitario * item.quantidade)

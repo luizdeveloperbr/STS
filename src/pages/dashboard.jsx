@@ -3,51 +3,36 @@ import { useNavigate } from 'react-router-dom';
 import {
   collection,
   setDoc,
-  doc,
-  query,
-  where,
-  getDocs,
+  doc
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useUserAuth } from '../contexts/AuthContext';
-import TabelaVendas from '../components/TabelaVendas';
+import VendaColuna from '../components/VendaColuna';
+import VendaColunaConfirmado from '../components/VendaColunaConfirmado';
 import Relatorios from '../components/Relatorios';
 import moment from 'moment';
+import { listarVendas } from "../firebase/controller"
 import ptBR from '../utils/pt-br';
+import { orderBy } from "lodash"
+import { reloadList } from "../utils/updateList"
 import { Form, Formik, Field } from 'formik';
 moment.updateLocale('pt-BR', ptBR);
 
 function Dashboard() {
-  const [reload, setReload] = useState(true)
   const [listaDeVendas, setListaDeVendas] = useState([]);
   const [listaDeVendasNot, setListaDeVendasNot] = useState([]);
   const { logOut, user } = useUserAuth();
   const navigate = useNavigate();
 
-  async function listarVendas(id, coluna, valor, completa, incompleta) {
-    let colecao;
-    if (valor == '') {
-      colecao = collection(db, id);
-    } else {
-      colecao = query(collection(db, id), where(coluna, '==', valor));
-    }
-    const querySnapshot = await getDocs(colecao);
-
-    let arrayDocs = [];
-    querySnapshot.forEach((doc) => {
-      arrayDocs.push({ ...doc.data(), id: doc.id });
-    });
-    let listaC = arrayDocs.filter((vnd) => vnd.confirmado === true);
-    let listaNot = arrayDocs.filter((vnd) => vnd.confirmado === false);
-    completa(listaC);
-    incompleta(listaNot);
-  }
+  const reload = reloadList((state) => state.reload)
+  const reloadUpdate = reloadList((state) => state.troggle)
 
   async function novoRegistro(values) {
     const docRef = doc(collection(db, user.uid));
-    const mesSubmit = moment(values.datetime, 'YYYY-MM-DD').format('YYYY-MM');
-    await setDoc(docRef, { ...values, mes: mesSubmit });
-    listarVendas(user.uid, 'mes', "", setListaDeVendas, setListaDeVendasNot);
+    const dateSubmit = moment(values.datetime, 'YYYY-MM-DD').toDate();
+    const mesSubmit = moment(values.datetime, "YYYY-MM-DD").format("YYYY-MM")
+    await setDoc(docRef, { ...values, datetime: dateSubmit, mes: mesSubmit });
+    reloadUpdate()
   }
 
   async function handleSignOut() {
@@ -55,8 +40,12 @@ function Dashboard() {
     navigate('/');
   }
 
+  const listaNaoC = orderBy(listaDeVendasNot, ["datetime"], "desc")
+  const listaC = orderBy(listaDeVendas, ["datetime"], "desc")
+
   useEffect(() => {
-    listarVendas(user.uid, "mes", "", setListaDeVendas, setListaDeVendasNot);
+    listarVendas(user.uid, "confirmado", true, setListaDeVendas);
+    listarVendas(user.uid, "confirmado", false, setListaDeVendasNot);
   }, [reload]);
 
   return (
@@ -76,6 +65,8 @@ function Dashboard() {
         initialValues={{
           userID: '',
           userName: '',
+          banco: '',
+          tipo: 'R',
           datetime: moment().format('YYYY-MM-DD'),
           quantidade: 0,
           custoUnitario: 4.5,
@@ -119,6 +110,7 @@ function Dashboard() {
               <Field
                 required
                 type="number"
+                step="0.5"
                 className="form-input w-[90px]"
                 name="custoUnitario"
                 placeholder="R$ X,XX"
@@ -133,16 +125,41 @@ function Dashboard() {
               <button type="reset" className="button mx-1">
                 Limpar
               </button>
-              <a onClick={() => setReload(!reload)} className="p-2 reload hover:cursor-pointer">
-              </a>
             </div>
           </Form>
         )}
       </Formik>
-      <TabelaVendas completa={listaDeVendas} incompleta={listaDeVendasNot} />
+      <div className="tabela">
+        <div className="flex justify-start" id="h">
+          <div className="header w-[150px]">Data</div>
+          <div className="header w-[150px]">Usuario</div>
+          <div className="header w-[150px]">Nome</div>
+          <form className="flex" action="">
+            <div className="header w-[90px]">Tipo</div>
+            <div className="header w-[150px]">Banco</div>
+            <div className="header w-[90px]">Licenças</div>
+            <div className="header w-[110px]">Valor da Venda</div>
+            <div className="header w-[110px]">Valor de Custo</div>
+            <div className="header w-[110px]">Lucro</div>
+            <div className="header w-[110px]">Confirmado</div>
+            <div className="header w-[110px]">
+              <a onClick={() => reloadUpdate()} className="p-2 reload hover:cursor-pointer">
+              </a>
+            </div>
+          </form>
+        </div>
+        {listaNaoC.map((vendaId) => {
+          return <VendaColuna key={vendaId.id} venda={vendaId} />;
+        })}
+        {listaC.map((vendaId) => {
+          return <VendaColunaConfirmado key={vendaId.id} venda={vendaId} />;
+        })}
+
+      </div>
       <table>
         <thead>
           <tr>
+            <th></th>
             <th></th>
             <th></th>
             <th></th>
@@ -155,7 +172,7 @@ function Dashboard() {
         {
           moment.months().map(mes => {
             return (
-              <Relatorios key={mes} update={reload} collection={user.uid} mes={mes} />
+              <Relatorios update={reload} key={mes} mes={mes} />
             )
           })
         }

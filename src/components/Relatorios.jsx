@@ -2,8 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { listarVendas, getTotal, getTotalCusto } from '../firebase/controller';
 import Real from './ComponentReal';
 import moment from 'moment';
+import { useUserAuth } from '../contexts/AuthContext';
 
-function Relatorios(prop) {
+function Relatorios({ mes, update }) {
+  const { user } = useUserAuth();
+
   const [tipo, setTipo] = useState('');
   const [listaMes, setListaMes] = useState([]);
 
@@ -20,9 +23,9 @@ function Relatorios(prop) {
   const filtrarPorTipo = listaMes.filter((venda) => venda.tipo === tipo);
 
   useEffect(() => {
-    const queryMes = moment(prop.mes, "MMMM").format("YYYY-MM")
-    listarVendas(prop.collection, 'mes', queryMes, setListaMes);
-  }, [prop.update]);
+    const queryMes = moment(mes, "MMMM").format("YYYY-MM")
+    listarVendas(user.uid, 'mes', queryMes, setListaMes);
+  }, [update]);
 
   useEffect(() => {
     getTotal(filtrarPorTipo, 'quantidade', setTotalQuantidadeTipo);
@@ -37,52 +40,55 @@ function Relatorios(prop) {
   }, [listaMes]);
 
   return (
-    <>{totalQuantidadeMes === 0 ? 
+    <>{totalQuantidadeMes === 0 ?
       <></> :
       <tbody id="tabela-relatorio">
-      <tr>
-        <td>
-          <a className="capitalize mx-1 py-0 hover:cursor-pointer" onClick={() => setTipo("")}>
-            {prop.mes}
-          </a>
+        <tr>
+          <td>
+            <a className="capitalize mx-1 py-0 hover:cursor-pointer hover:underline hover:text-blue-600" onClick={() => setTipo("")}>
+              {mes}
+            </a>
 
-        </td>
-        <td>
-          <a className="button mx-1 py-0 hover:cursor-pointer" onClick={() => setTipo('R')}>
-            R
-          </a>
-        </td>
-        <td>
-          <a className="button mx-1 py-0 hover:cursor-pointer" onClick={() => setTipo('N')}>
-            N
-          </a>
-        </td>
-        <td>
-          {tipo === "" ? totalQuantidadeMes : totalQuantidadeTipo}
-        </td>
-        <td className="px-2">
-          {tipo === "" ? (
-            <Real valor={totalVendasMes} />
-          ) : (
-            <Real valor={totalVendasTipo} />
-          )}
-        </td>
-        <td className="px-2">
-          {tipo === "" ? (
-            <Real valor={totalCustoMes} />
-          ) : (
-            <Real valor={totalCustoTipo} />
-          )}
-        </td>
-        <td className="px-2">
-          {tipo === "" ? (
-            <Real valor={totalVendasMes - totalCustoMes} />
-          ) : (
-            <Real valor={totalVendasTipo - totalCustoTipo} />
-          )}
-        </td>
-      </tr>
-    </tbody>
+          </td>
+          <td>
+            <a className="button mx-1 py-0 hover:cursor-pointer" onClick={() => setTipo('R')}>
+              R
+            </a>
+          </td>
+          <td>
+            <a className="button mx-1 py-0 hover:cursor-pointer" onClick={() => setTipo('N')}>
+              N
+            </a>
+          </td>
+          <td>
+            <span className="mx-2 font-bold">{tipo}</span>
+          </td>
+          <td>
+            {tipo === "" ? totalQuantidadeMes : totalQuantidadeTipo}
+          </td>
+          <td className="px-2">
+            {tipo === "" ? (
+              <Real valor={totalVendasMes} />
+            ) : (
+              <Real valor={totalVendasTipo} />
+            )}
+          </td>
+          <td className="px-2">
+            {tipo === "" ? (
+              <Real valor={totalCustoMes} />
+            ) : (
+              <Real valor={totalCustoTipo} />
+            )}
+          </td>
+          <td className="px-2">
+            {tipo === "" ? (
+              <Real valor={totalVendasMes - totalCustoMes} />
+            ) : (
+              <Real valor={totalVendasTipo - totalCustoTipo} />
+            )}
+          </td>
+        </tr>
+      </tbody>
     }</>
 
   );

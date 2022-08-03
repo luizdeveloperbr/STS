@@ -4,23 +4,30 @@ import Real from "./ComponentReal";
 import DataParsed from "./dataParsed";
 import React from "react";
 import { useUserAuth } from "../contexts/AuthContext"
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
+import { reloadList } from "../utils/updateList"
+
 
 function VendaColunaConfirmado({ venda }) {
 
     const { user } = useUserAuth()
-    const navigate = useNavigate()
+    // const navigate = useNavigate()
+    const reloadUpdate = reloadList((state) => state.troggle)
+
 
     async function editVenda(vendaId) {
         const docRef = doc(collection(db, user.uid), vendaId);
         await setDoc(docRef, { confirmado: false }, { merge: true });
-        navigate('/');
+        // navigate('/');
+        reloadUpdate()
     }
 
     async function deletarVenda(vendaId) {
         alert("Deletar")
         await deleteDoc(doc(db, user.uid, vendaId))
-        navigate("/")
+        // navigate("/")
+        reloadUpdate()
+
     }
 
     return (
