@@ -8,7 +8,7 @@ import {
 import { db } from '../firebase';
 import { useUserAuth } from '../contexts/AuthContext';
 import VendaColuna from '../components/VendaColuna';
-import VendaColunaConfirmado from '../components/VendaColunaConfirmado';
+//import VendaColunaConfirmado from '../components/VendaColunaConfirmado';
 import Relatorios from '../components/Relatorios';
 import moment from 'moment';
 import { listarVendas } from "../firebase/controller"
@@ -21,6 +21,8 @@ moment.updateLocale('pt-BR', ptBR);
 function Dashboard() {
   const [todos,setTodos] = useState([])
   const [custoUnitario, setCustoUnitario] = useState(4)
+  const [localReload, setLocalReload] = useState(true);
+
   // const [listaDeVendas, setListaDeVendas] = useState([]);
   // const [listaDeVendasNot, setListaDeVendasNot] = useState([]);
   const { logOut, user } = useUserAuth();
@@ -33,7 +35,7 @@ function Dashboard() {
     const docRef = doc(collection(db, user.uid));
     const dateSubmit = moment().toDate();
     const mesSubmit = moment(values.datetime, "YYYY-MM-DD").format("YYYY-MM")
-    await setDoc(docRef, { ...values, datetime: dateSubmit, mes: mesSubmit, custoUnitario });
+    await setDoc(docRef, { ...values, created_at: dateSubmit, mes: mesSubmit, custoUnitario });
     reloadUpdate()
   }
 
@@ -41,7 +43,7 @@ function Dashboard() {
     await logOut();
     navigate('/');
   }
-  const todosOrder = orderBy(todos,["datetime"],"desc")
+  const todosOrder = orderBy(todos,["created_at"],"desc")
   // const listaNaoC = orderBy(listaDeVendasNot.filter(venda => venda.confirmado === false), ["datetime"], "desc")
   // const listaC = orderBy(listaDeVendas.filter(venda => venda.confirmado === true), ["updatetime"], "desc")
 
@@ -83,7 +85,7 @@ function Dashboard() {
               Data
               <Field
                 type="date"
-                // min={moment().format('YYYY-MM-DD')}
+                min={moment().format('YYYY-MM-DD')}
                 name="datetime"
                 className="form-input"
                 required
@@ -148,8 +150,8 @@ function Dashboard() {
             <div className="header w-[110px]">Lucro</div>
             <div className="header w-[110px]">Confirmado</div>
             <div className="header w-[110px]">
-              <a onClick={() => reloadUpdate()} className="p-2 reload hover:cursor-pointer">
-              </a>
+             {todos.length === 0 ? <a onClick={() => reloadUpdate()} className="p-2 reload hover:cursor-pointer">
+              </a>:<></>}
             </div>
           </form>
         </div>
@@ -181,10 +183,19 @@ function Dashboard() {
         {
           moment.months().map(mes => {
             return (
-              <Relatorios key={mes} mes={mes} />
+              <Relatorios key={mes} update={localReload} mes={mes} />
             )
           })
         }
+        <tfoot>
+          {localReload ? 
+          <tr>
+          <td colSpan="8">
+          <a className="mx-1 py-0 hover:cursor-pointer hover:underline hover:text-blue-600" onClick={()=> setLocalReload(!localReload)}>Carregar</a>
+          </td>
+        </tr>:<></>
+          }
+        </tfoot>
       </table>
     </div>
   );
