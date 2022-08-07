@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react"
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
+import { signInWithEmailAndPassword, onAuthStateChanged, signOut, updatePassword } from "firebase/auth";
 import { auth } from "../firebase"
 import { useNavigate } from 'react-router-dom'
 
@@ -25,23 +25,32 @@ export function AuthProvider({ children }) {
             setError("Senha Invalida")
             break;
           default:
-            setError("")
+            setError(JSON.stringify(e))
         }
       })
   }
 
-  async function signUp(email, password) {
-    try {
-      const userN = await createUserWithEmailAndPassword(auth, email, password);
-      console.log(userN);
-      navigate("/dashboard")
-    } catch (e) {
-      return console.error(e.message);
-    }
-  }
+  // async function signUp(email, password) {
+  //   try {
+  //     const userN = await createUserWithEmailAndPassword(auth, email, password);
+  //     console.log(userN);
+  //     navigate("/dashboard")
+  //   } catch (e) {
+  //     return console.error(e.message);
+  //   }
+  // }
 
   function logOut() {
     return signOut(auth)
+  }
+
+  function passwordChange(newPassWord){
+    console.log(user)
+    updatePassword(user,newPassWord).then((userCredential) => {
+      // setUser(userCredential.user)
+      console.log(userCredential)
+      // navigate("/dashboard")
+    }).catch(e => console.log(e))
   }
 
   useEffect(() => {
@@ -60,7 +69,7 @@ export function AuthProvider({ children }) {
     error,
     setError,
     logOut,
-    signUp
+    passwordChange
   }
 
   return (

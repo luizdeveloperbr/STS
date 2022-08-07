@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 import {
   collection,
   setDoc,
@@ -19,19 +19,21 @@ import { Form, Formik, Field } from 'formik';
 moment.updateLocale('pt-BR', ptBR);
 
 function Dashboard() {
-  const [listaDeVendas, setListaDeVendas] = useState([]);
-  const [listaDeVendasNot, setListaDeVendasNot] = useState([]);
+  const [todos,setTodos] = useState([])
+  const [custoUnitario, setCustoUnitario] = useState(4)
+  // const [listaDeVendas, setListaDeVendas] = useState([]);
+  // const [listaDeVendasNot, setListaDeVendasNot] = useState([]);
   const { logOut, user } = useUserAuth();
   const navigate = useNavigate();
 
   const reload = reloadList((state) => state.reload)
-  const reloadUpdate = reloadList((state) => state.troggle)
+  const reloadUpdate = reloadList((state) => state.toggle)
 
   async function novoRegistro(values) {
     const docRef = doc(collection(db, user.uid));
-    const dateSubmit = moment(values.datetime, 'YYYY-MM-DD').toDate();
+    const dateSubmit = moment().toDate();
     const mesSubmit = moment(values.datetime, "YYYY-MM-DD").format("YYYY-MM")
-    await setDoc(docRef, { ...values, datetime: dateSubmit, mes: mesSubmit });
+    await setDoc(docRef, { ...values, datetime: dateSubmit, mes: mesSubmit, custoUnitario });
     reloadUpdate()
   }
 
@@ -39,26 +41,27 @@ function Dashboard() {
     await logOut();
     navigate('/');
   }
-
-  const listaNaoC = orderBy(listaDeVendasNot, ["datetime"], "desc")
-  const listaC = orderBy(listaDeVendas, ["datetime"], "desc")
+  const todosOrder = orderBy(todos,["datetime"],"desc")
+  // const listaNaoC = orderBy(listaDeVendasNot.filter(venda => venda.confirmado === false), ["datetime"], "desc")
+  // const listaC = orderBy(listaDeVendas.filter(venda => venda.confirmado === true), ["updatetime"], "desc")
 
   useEffect(() => {
-    listarVendas(user.uid, "confirmado", true, setListaDeVendas);
-    listarVendas(user.uid, "confirmado", false, setListaDeVendasNot);
+    listarVendas(user.uid, "mes", moment().format("YYYY-MM"), setTodos,100)
+    // listarVendas(user.uid, "mes", moment().format("YYYY-MM"), setListaDeVendas,15);
+    // listarVendas(user.uid, "mes", moment().format("YYYY-MM"), setListaDeVendasNot);
   }, [reload]);
-
   return (
     <div id="main" className="p-4">
-      <nav className="font-bold pl-2 min-h-[40px] border border-black rounded mb-2 flex flex-grow place-items-center bg-slate-200">
-        <div>Usuario:</div>
-        <div>
+      <nav className="font-bold pl-2 border border-black min-h-[40px] rounded mb-2 relative bg-slate-200">
+        <div className='mt-2 float-left'>Usuario: {user.email} </div>
+        <div className="mt-2 float-right">
           <a
-            className="ml-2 button hover:cursor-pointer"
+            className="mx-2 button hover:cursor-pointer"
             onClick={handleSignOut}
           >
-            {user.email}
+            Sair
           </a>
+        {/* <Link className="ml-2 button hover:cursor-pointer" to="/trocar-senha">Trocar Senha</Link> */}
         </div>
       </nav>
       <Formik
@@ -69,7 +72,6 @@ function Dashboard() {
           tipo: 'R',
           datetime: moment().format('YYYY-MM-DD'),
           quantidade: 0,
-          custoUnitario: 4.5,
           valorVenda: 0,
           confirmado: false
         }}
@@ -81,7 +83,7 @@ function Dashboard() {
               Data
               <Field
                 type="date"
-                min={moment().format('YYYY-MM-DD')}
+                // min={moment().format('YYYY-MM-DD')}
                 name="datetime"
                 className="form-input"
                 required
@@ -107,12 +109,15 @@ function Dashboard() {
             </label>
             <label className="m-1 grid text-sm" htmlFor="custoUnitario">
               Custo Unitario
-              <Field
+              <input
                 required
+                onChange={e => setCustoUnitario(e.target.value)}
                 type="number"
                 step="0.5"
+                min="4"
                 className="form-input w-[90px]"
                 name="custoUnitario"
+                value={custoUnitario}
                 placeholder="R$ X,XX"
               />
             </label>
@@ -148,13 +153,17 @@ function Dashboard() {
             </div>
           </form>
         </div>
-        {listaNaoC.map((vendaId) => {
+        {/* {listaNaoC.map((vendaId) => {
           return <VendaColuna key={vendaId.id} venda={vendaId} />;
         })}
         {listaC.map((vendaId) => {
           return <VendaColunaConfirmado key={vendaId.id} venda={vendaId} />;
-        })}
-
+        })} */}
+        {
+          todosOrder.map(vendaID => {
+            return <VendaColuna key={vendaID.id} venda={vendaID} />
+          })
+        }
       </div>
       <table>
         <thead>
@@ -172,7 +181,7 @@ function Dashboard() {
         {
           moment.months().map(mes => {
             return (
-              <Relatorios update={reload} key={mes} mes={mes} />
+              <Relatorios key={mes} mes={mes} />
             )
           })
         }

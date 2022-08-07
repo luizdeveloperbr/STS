@@ -1,12 +1,15 @@
-import { collection, query, where, getDocs } from "firebase/firestore"
+import { collection, query, where, getDocs, limit } from "firebase/firestore"
 import { db } from "./index"
 
-export async function listarVendas(id, coluna, valor, setState) {
+export async function listarVendas(id, coluna, valor, setState, limite) {
     let colecao
     if (id === undefined) {
         setState([])
     } else {
-        colecao = query(collection(db, id), where(coluna, "==", valor))
+        limite === undefined ?
+            (colecao = query(collection(db, id), where(coluna, "==", valor))) :
+            (colecao = query(collection(db, id), where(coluna, "==", valor), limit(limite)))
+
         const querySnapshot = await getDocs(colecao);
 
         let arrayDocs = []

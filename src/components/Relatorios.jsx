@@ -4,7 +4,7 @@ import Real from './ComponentReal';
 import moment from 'moment';
 import { useUserAuth } from '../contexts/AuthContext';
 
-function Relatorios({ mes, update }) {
+function Relatorios({ mes }) {
   const { user } = useUserAuth();
 
   const [tipo, setTipo] = useState('');
@@ -25,7 +25,7 @@ function Relatorios({ mes, update }) {
   useEffect(() => {
     const queryMes = moment(mes, "MMMM").format("YYYY-MM")
     listarVendas(user.uid, 'mes', queryMes, setListaMes);
-  }, [update]);
+  }, []);
 
   useEffect(() => {
     getTotal(filtrarPorTipo, 'quantidade', setTotalQuantidadeTipo);

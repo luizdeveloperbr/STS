@@ -56,8 +56,8 @@
   center no-repeat;
 }
 
-input::-webkit-inner-spin-button,
-input::-webkit-outer-spin-button {
+.input-number::-webkit-inner-spin-button,
+.input-number::-webkit-outer-spin-button {
   display: none;
 }
 [list]::-webkit-calendar-picker-indicator {

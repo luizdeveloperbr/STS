@@ -12,7 +12,7 @@ function VendaColunaConfirmado({ venda }) {
 
     const { user } = useUserAuth()
     // const navigate = useNavigate()
-    const reloadUpdate = reloadList((state) => state.troggle)
+    const reloadUpdate = reloadList((state) => state.toggle)
 
 
     async function editVenda(vendaId) {
