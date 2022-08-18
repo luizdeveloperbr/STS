@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react"
-import { signInWithEmailAndPassword, onAuthStateChanged, signOut, updatePassword } from "firebase/auth";
+import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../firebase"
 import { useNavigate } from 'react-router-dom'
 
@@ -9,48 +9,32 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState({})
   const [error, setError] = useState("")
   const navigate = useNavigate()
-  function logIn(email, password) {
-    setError("")
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        setUser(userCredential.user)
-          navigate("/dashboard")
-      })
-      .catch(e => {
-        switch (e.code) {
-          case "auth/invalid-email":
-            setError("E-mail invalido");
-            break;
-          case "auth/wrong-password":
-            setError("Senha Invalida")
-            break;
-          default:
-            setError(JSON.stringify(e))
-        }
-      })
-  }
 
-  // async function signUp(email, password) {
-  //   try {
-  //     const userN = await createUserWithEmailAndPassword(auth, email, password);
-  //     console.log(userN);
-  //     navigate("/dashboard")
-  //   } catch (e) {
-  //     return console.error(e.message);
-  //   }
-  // }
+  function logIn(email, password) {
+    signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      setUser(userCredential.user)
+        navigate("/dashboard")
+    })
+    .catch(e => {
+      switch (e.code) {
+        case "auth/invalid-email":
+          setError("E-mail invalido");
+          break;
+        case "auth/wrong-password":
+          setError("Senha Invalida")
+          break;
+        case "auth/user-not-found":
+          setError("Usuario não Cadastrado")
+          break;
+        default:
+          setError(JSON.stringify(e))
+      }
+    })
+  }
 
   function logOut() {
     return signOut(auth)
-  }
-
-  function passwordChange(newPassWord){
-    console.log(user)
-    updatePassword(user,newPassWord).then((userCredential) => {
-      // setUser(userCredential.user)
-      console.log(userCredential)
-      // navigate("/dashboard")
-    }).catch(e => console.log(e))
   }
 
   useEffect(() => {
@@ -68,8 +52,7 @@ export function AuthProvider({ children }) {
     logIn,
     error,
     setError,
-    logOut,
-    passwordChange
+    logOut
   }
 
   return (

@@ -1,21 +1,21 @@
-import React, { useEffect,useState } from 'react'
-import { Formik, Form } from 'formik'
-import { useNavigate } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { Formik, Form, Field } from 'formik'
+import { Link, useNavigate } from 'react-router-dom'
 import { useUserAuth } from '../contexts/AuthContext'
 
 const LoginPage = () => {
-    const { logIn, error, user } = useUserAuth()
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
+    const { logIn, error, user, setError } = useUserAuth()
     const navigate = useNavigate()
-    function handlerSubmit() {
-        logIn(email, password)
+    function handlerSubmit(values) {
+        logIn(values.email, values.password)
     }
+
     useEffect(() => {
+        setError("")
         if (user !== null) {
             navigate("/dashboard")
         }
-    },[])
+    }, [])
     return (
         <div className="page-conteiner">
             <Formik
@@ -32,15 +32,13 @@ const LoginPage = () => {
                             </div>
                             <Form>
                                 <div className="block text-center">
-                                    {/* <label htmlFor="email">E-mail </label> */}
-                                    <input required type="email" placeholder='E-mail' className="form-input" name="email" onInput={event => setEmail(event.target.value)} />
+                                    <Field required type="email" placeholder='E-mail' className="form-input" name="email" />
                                 </div>
                                 <div className="block text-center">
-                                    {/* <label htmlFor="senha">Senha </label> */}
-                                    <input required type="password" placeholder='******' className="form-input" name="password" onInput={event => setPassword(event.target.value)} />
+                                    <Field required type="password" placeholder='******' className="form-input" name="password" />
                                 </div>
                                 <div className="block text-center mb-3 text-red-700">
-                                    <b className="text-lg">{error}</b>
+                                    <b>{ error ? <Link  to="/dashboard">{error}</Link> : ""}</b>
                                 </div>
                                 <div className="block text-center">
                                     <button type="submit" className="button disabled:bg-red-600" disabled={isSubmitting}>Login</button>

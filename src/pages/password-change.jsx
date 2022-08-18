@@ -1,29 +1,27 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Formik, Form } from 'formik'
 import { useNavigate } from 'react-router-dom'
 import { useUserAuth } from '../contexts/AuthContext'
+import { auth } from '../firebase'
+import { updatePassword } from "firebase/auth"
 
 const UserPasswordChange = () => {
-    const { setError, error, user, passwordChange } = useUserAuth()
+    const { setError, error } = useUserAuth()
     const [passwordConfirm, setPasswordConfirm] = useState("")
     const [password, setPassword] = useState("")
     const navigate = useNavigate()
 
     function handlerSubmit() {
         if (password === passwordConfirm) {
-            console.log(typeof password.toString())
-            return passwordChange(user, password.toString())
-            // navigate("/dashboard")
-        } else {
-            // setError("Não foi possivel alterar a senha")
-            navigate("/erro")
+            console.log(password)
+            updatePassword(auth.currentUser, password.toString()).then(
+                navigate("/dashboard")
+            ).catch(e => {
+                setError(e.message)
+                navigate("/trocar-senha")
+            })
         }
-        // logIn(email, password)
     }
-    // useEffect(() => {
-    //     if (user !== null) {
-    //     }
-    // },[])
     return (
         <div className="page-conteiner">
             <Formik
@@ -39,18 +37,16 @@ const UserPasswordChange = () => {
                             </div>
                             <Form>
                                 <div className="block text-center">
-                                    {/* <label htmlFor="email">E-mail </label> */}
                                     <input required type="password" placeholder='Nova Senha' className="form-input" name="password" onInput={event => setPassword(event.target.value)} />
                                 </div>
                                 <div className="block text-center">
-                                    {/* <label htmlFor="senha">Senha </label> */}
                                     <input required type="password" placeholder='Redigite a Senha' className="form-input" onInput={event => setPasswordConfirm(event.target.value)} />
                                 </div>
                                 <div className="block text-center mb-3 text-red-700">
                                     <b className="text-lg">{error}</b>
                                 </div>
                                 <div className="block text-center">
-                                    <button type="submit" className="button disabled:bg-red-600" disabled={isSubmitting}>Login</button>
+                                    <button type="submit" className="button disabled:text-gray-500" disabled={passwordConfirm.length < 6}>Confirmar</button>
                                 </div>
                             </Form>
                         </div>

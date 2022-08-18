@@ -2,9 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { listarVendas, getTotal, getTotalCusto } from '../firebase/controller';
 import Real from './ComponentReal';
 import moment from 'moment';
+moment.locale('pt-br',{
+  months: 'janeiro_fevereiro_março_abril_maio_junho_julho_agosto_setembro_outubro_novembro_dezembro'.split(
+      '_'
+  )})
 import { useUserAuth } from '../contexts/AuthContext';
 
-function Relatorios({ mes, update }) {
+function Relatorios({ mes }) {
   const { user } = useUserAuth();
 
   const [tipo, setTipo] = useState('');
@@ -21,9 +25,10 @@ function Relatorios({ mes, update }) {
   const filtrarPorTipo = listaMes.filter((venda) => venda.tipo === tipo);
 
   useEffect(() => {
+    console.info(moment.locale())
     const queryMes = moment(mes, 'MMMM').format('YYYY-MM');
     listarVendas(user.uid, 'mes', queryMes, setListaMes);
-  }, [update]);
+  }, []);
 
   useEffect(() => {
     getTotal(filtrarPorTipo, 'quantidade', setTotalQuantidadeTipo);
