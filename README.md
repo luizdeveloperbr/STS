@@ -1,4 +1,3 @@
-
 # Controle de Vendas
 
 sistema de comtrole de vendas realizados por aplicativo de mensagem (Telegram)
@@ -11,7 +10,7 @@ sistema de comtrole de vendas realizados por aplicativo de mensagem (Telegram)
 
 ## Screenshots
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![App Screenshot](https://raw.githubusercontent.com/luizdeveloperbr/STS/master/docs/01.png)
 
 ## Demonstração
 
