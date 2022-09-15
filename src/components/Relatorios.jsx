@@ -25,7 +25,6 @@ function Relatorios({ mes }) {
   const filtrarPorTipo = listaMes.filter((venda) => venda.tipo === tipo);
 
   useEffect(() => {
-    console.info(moment.locale())
     const queryMes = moment(mes, 'MMMM').format('YYYY-MM');
     listarVendas(user.uid, 'mes', queryMes, setListaMes);
   }, []);
@@ -50,31 +49,26 @@ function Relatorios({ mes }) {
         <tbody id="tabela-relatorio">
           <tr>
             <td>
-              <a
-                className="capitalize mx-1 py-0 hover:cursor-pointer hover:underline hover:text-blue-600"
+            <a
+                className="capitalize mx-1 py-0 hover:cursor-pointer hover:underline hover:text-blue-400"
                 onClick={() => setTipo('')}
               >
                 {mes}
               </a>
             </td>
             <td>
-              <a
-                className="button mx-1 py-0 hover:cursor-pointer"
+            <a
+                className="font-bold mx-1 py-0 hover:cursor-pointer"
                 onClick={() => setTipo('R')}
               >
-                R
+                {tipo === 'R' ? (<span className="button-active">R</span>): (<span className="button">R</span>)}
               </a>
-            </td>
-            <td>
               <a
-                className="button mx-1 py-0 hover:cursor-pointer"
+                className="font-bold mx-1 py-0 hover:cursor-pointer"
                 onClick={() => setTipo('N')}
               >
-                N
+                {tipo === 'N' ? (<span className="button-active">N</span>): (<span className="button">N</span>)}
               </a>
-            </td>
-            <td>
-              <span className="mx-2 font-bold">{tipo}</span>
             </td>
             <td>{tipo === '' ? totalQuantidadeMes : totalQuantidadeTipo}</td>
             <td className="px-2">

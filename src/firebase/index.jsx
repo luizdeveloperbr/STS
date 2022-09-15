@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore,connectFirestoreEmulator } from "firebase/firestore"
+import { getFirestore } from "firebase/firestore"
 import { getAuth } from "firebase/auth"
 // Initialize Firebase
 const app = initializeApp({
@@ -11,7 +11,6 @@ const app = initializeApp({
   appId: `1:${import.meta.env.VITE_MESSAGING_SENDER_ID}:web:${import.meta.env.VITE_APP_ID}`
 })
 const db = getFirestore(app)
-// const db = getFirestore()
-// connectFirestoreEmulator(db,'localhost',8081)
+
 const auth = getAuth(app)
 export { db, auth }

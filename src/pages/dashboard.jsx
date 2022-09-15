@@ -126,7 +126,8 @@ function Dashboard() {
           </Form>
         )}
       </Formik>
-      <div className="tabela table border-collapse overflow-y-hidden">
+      <div className="overflow-y-hidden">
+      <div className="tabela table border-collapse">
         <div className="flex justify-start" id="h">
           <div className="header w-[150px]">Data</div>
           <div className="header w-[150px]">Usuario</div>
@@ -150,6 +151,7 @@ function Dashboard() {
             return <VendaColuna key={vendaID.id} venda={vendaID} />
           })
         }
+      </div>
       </div>
     </div>
   );

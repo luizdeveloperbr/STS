@@ -32,9 +32,7 @@ function Report() {
           <tr>
             <th></th>
             <th></th>
-            <th></th>
-            <th></th>
-            <th>Quantidade</th>
+            <th>Qnt.</th>
             <th>Venda </th>
             <th>Custo</th>
             <th>Lucro</th>
