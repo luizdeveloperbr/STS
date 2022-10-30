@@ -7,9 +7,9 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-.firebase/*
+.firebase/
 .firebaserc
-.firebase.json
+firebase.json
 .firestore.indexes.json
 package-lock.json
 node_modules

@@ -1,20 +1,19 @@
-import { setDoc, collection, doc, deleteDoc } from 'firebase/firestore';
-import { db } from '../firebase';
-import React from 'react';
-import Real from './ComponentReal';
-import { Formik, Form, Field } from 'formik';
-import { useUserAuth } from '../contexts/AuthContext';
-import { reloadList } from '../utils/updateList';
-import DataParsed from './dataParsed';
+import { setDoc, collection, doc, deleteDoc } from "firebase/firestore";
+import { db } from "../firebase";
+import React from "react";
+import Real from "./ComponentReal";
+import { Formik, Form, Field } from "formik";
+import { useUserAuth } from "../contexts/AuthContext";
+import { reloadList } from "../utils/updateList";
+import DataParsed from "./dataParsed";
 
 function VendaColuna({ venda }) {
   const { user } = useUserAuth();
   const reloadUpdate = reloadList((state) => state.toggle);
 
-  const bancos = ["Santander", "Nubank", "Mercado Pago"]
+  const bancos = ["Santander", "Nubank", "Mercado Pago"];
 
   async function handleSubmitValue(values) {
-
     const docRef = doc(collection(db, user.uid), venda.id);
     await setDoc(docRef, { ...values, confirmado: true }, { merge: true });
     reloadUpdate();
@@ -27,7 +26,7 @@ function VendaColuna({ venda }) {
   }
 
   async function deletarVenda(vendaId) {
-    alert('Deletar');
+    alert("Deletar");
     await deleteDoc(doc(db, user.uid, vendaId));
     reloadUpdate();
   }
@@ -35,27 +34,32 @@ function VendaColuna({ venda }) {
   return (
     <>
       {venda.confirmado === false ? (
-        <div className="flex justify-start" id="e">
-          <Formik initialValues={venda} onSubmit={handleSubmitValue}>
+        <div
+          className="flex justify-start"
+          id="e"
+        >
+          <Formik
+            initialValues={venda}
+            onSubmit={handleSubmitValue}
+          >
             {({ values, handleSubmit, handleChange }) => (
               <>
                 <div className="row w-[150px] pt-2">
-                  <DataParsed timestamp={venda.datetime} format="DD/MM/YYYY" />
+                  <DataParsed
+                    timestamp={venda.datetime}
+                    format="DD/MM/YYYY"
+                  />
                 </div>
-                <div className="w-[150px] pt-2 border border-black text-center">
-                  {venda.userID}
-                </div>
-                <div className="w-[150px] pt-2 border border-black text-center">
-                  {venda.userName}
-                </div>
+                <div className="w-[150px] pt-2">{venda.userID}</div>
+                <div className="w-[150px] pt-2">{venda.userName}</div>
                 <Form className="flex">
-                  <div className="border pt-2 text-center border-black">
+                  <div className="pt-2">
                     <div className="flex w-[88px] justify-evenly">
                       <label className="mx-1">
                         R
                         <Field
                           type="radio"
-                          className="ml-2 scale-150"
+                          className="ml-2 form-radio"
                           name="tipo"
                           value="R"
                         ></Field>
@@ -64,14 +68,14 @@ function VendaColuna({ venda }) {
                         N
                         <Field
                           type="radio"
-                          className="ml-2 scale-150"
+                          className="ml-2 form-radio"
                           name="tipo"
                           value="N"
                         ></Field>
                       </label>
                     </div>
                   </div>
-                  <div className="border border-black text-center">
+                  <div>
                     <input
                       onChange={handleChange}
                       name="banco"
@@ -81,13 +85,16 @@ function VendaColuna({ venda }) {
                     />
                     <datalist id="bank">
                       {bancos.map((banco) => (
-                        <option key={banco} value={banco}>
+                        <option
+                          key={banco}
+                          value={banco}
+                        >
                           {banco}
                         </option>
                       ))}
                     </datalist>
                   </div>
-                  <div className="border border-black text-center">
+                  <div>
                     <Field
                       name="quantidade"
                       className="form-input max-w-[80px] input-number"
@@ -95,7 +102,7 @@ function VendaColuna({ venda }) {
                       placeholder="Qnt."
                     ></Field>
                   </div>
-                  <div className="border border-black text-center">
+                  <div>
                     <Field
                       name="valorVenda"
                       className="form-input max-w-[100px] input-number"
@@ -103,10 +110,10 @@ function VendaColuna({ venda }) {
                       placeholder="R$ 100.00"
                     ></Field>
                   </div>
-                  <div className="w-[110px] pt-2 border border-black text-center">
+                  <div className="w-[110px] pt-2 text-center">
                     <Real valor={values.quantidade * venda.custoUnitario} />
                   </div>
-                  <div className="w-[110px] pt-2 border border-black text-center">
+                  <div className="w-[110px] pt-2 text-center">
                     <Real
                       valor={
                         values.valorVenda -
@@ -114,22 +121,36 @@ function VendaColuna({ venda }) {
                       }
                     />
                   </div>
-                  <div className="w-[110px] pt-2 border border-black text-center">
+                  <div className="w-[110px] pt-2 text-center">
                     {values.banco && values.quantidade && values.valorVenda ? (
                       <input
-                        className="scale-150"
+                        className="form-checkbox"
                         type="checkbox"
                         onInput={handleSubmit}
                       />
                     ) : (
-                      <input className="scale-150" type="checkbox" disabled />
+                      <input
+                        className="form-checkbox"
+                        type="checkbox"
+                        disabled
+                      />
                     )}
                   </div>
-                  <div className="w-[40px] justify-evenly flex p-1 border border-black text-center">
+                  <div className="w-[40px] justify-evenly flex p-1 text-center">
                     <a
-                      className="p-2 block mt-1 delete hover:cursor-pointer"
+                      className="p-2 block hover:cursor-pointer"
                       onClick={() => deletarVenda(venda.id)}
-                    ></a>
+                    >
+                      <svg
+                        className="hover:fill-red-600 mx-auto"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="20"
+                        height="20"
+                        viewBox="0 0 8 8"
+                      >
+                        <path d="M4 0c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm-1.5 1.78l1.5 1.5 1.5-1.5.72.72-1.5 1.5 1.5 1.5-.72.72-1.5-1.5-1.5 1.5-.72-.72 1.5-1.5-1.5-1.5.72-.72z" />
+                      </svg>
+                    </a>
                   </div>
                 </Form>
               </>
@@ -137,40 +158,66 @@ function VendaColuna({ venda }) {
           </Formik>
         </div>
       ) : (
-        <div className="flex justify-start" id="c">
-          <div className="row w-[150px]">
-            <DataParsed timestamp={venda.datetime} format="DD/MM/YYYY" />
+        <div
+          className="flex justify-start"
+          id="c"
+        >
+          <div className="text-center w-[150px]">
+            <DataParsed
+              timestamp={venda.datetime}
+              format="DD/MM/YYYY"
+            />
           </div>
-          <div className="row w-[150px]">{venda.userID}</div>
-          <div className="row w-[150px]">{venda.userName}</div>
+          <div className="text-center w-[150px]">{venda.userID}</div>
+          <div className="text-center w-[150px]">{venda.userName}</div>
           <form className="flex">
-            <div className="row w-[90px]">{venda.tipo}</div>
-            <div className="row w-[150px] capitalize">{venda.banco}</div>
-            <div className="row w-[90px]">{venda.quantidade}</div>
-            <div className="row w-[110px]">
+            <div className="text-center w-[90px]">{venda.tipo}</div>
+            <div className="text-center w-[150px] capitalize">{venda.banco}</div>
+            <div className="text-center w-[90px]">{venda.quantidade}</div>
+            <div className="text-center w-[110px]">
               <Real valor={venda.valorVenda} />
             </div>
-            <div className="row w-[110px]">
+            <div className="text-center w-[110px]">
               <Real valor={venda.quantidade * venda.custoUnitario} />
             </div>
-            <div className="row w-[110px]">
+            <div className="text-center w-[110px]">
               <Real
                 valor={
                   venda.valorVenda - venda.quantidade * venda.custoUnitario
                 }
               />
             </div>
-            <div className="row w-[110px]">
+            <div className="text-center w-[110px]">
               <a
-                className="p-2 block task mt-1 hover:cursor-pointer"
+                className="p-2 block hover:cursor-pointer"
                 onClick={() => editVenda(venda.id)}
-              ></a>
+              >
+                <svg
+                className="mx-auto"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 8 8"
+                >
+                  <path d="M0 0v7h7v-3.59l-1 1v1.59h-5v-5h3.59l1-1h-5.59zm7 0l-3 3-1-1-1 1 2 2 4-4-1-1z" />
+                </svg>
+              </a>
             </div>
-            <div className="w-[40px] justify-evenly flex p-1 border border-black text-center">
+            <div className="w-[40px] justify-evenly flex p-1">
               <a
-                className="p-2 block delete mt-1 hover:cursor-pointer"
+                className="p-2 block hover:cursor-pointer"
                 onClick={() => deletarVenda(venda.id)}
-              ></a>
+              >
+                <svg
+                  className="hover:fill-red-600 mx-auto"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 8 8"
+                >
+                  <path d="M4 0c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm-1.5 1.78l1.5 1.5 1.5-1.5.72.72-1.5 1.5 1.5 1.5-.72.72-1.5-1.5-1.5 1.5-.72-.72 1.5-1.5-1.5-1.5.72-.72z" />
+                </svg>
+              </a>
             </div>
           </form>
         </div>
