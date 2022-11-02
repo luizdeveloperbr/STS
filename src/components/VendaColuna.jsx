@@ -44,16 +44,16 @@ function VendaColuna({ venda }) {
           >
             {({ values, handleSubmit, handleChange }) => (
               <>
-                <div className="row w-[150px] pt-2">
+                <div className=" w-[150px] pt-2 text-center">
                   <DataParsed
                     timestamp={venda.datetime}
                     format="DD/MM/YYYY"
                   />
                 </div>
-                <div className="w-[150px] pt-2">{venda.userID}</div>
-                <div className="w-[150px] pt-2">{venda.userName}</div>
+                <div className="w-[150px] pt-2  text-center">{venda.userID}</div>
+                <div className="w-[150px] pt-2  text-center">{venda.userName}</div>
                 <Form className="flex">
-                  <div className="pt-2">
+                  <div className="pt-2 ">
                     <div className="flex w-[88px] justify-evenly">
                       <label className="mx-1">
                         R
@@ -75,12 +75,12 @@ function VendaColuna({ venda }) {
                       </label>
                     </div>
                   </div>
-                  <div>
+                  <div className="">
                     <input
                       onChange={handleChange}
                       name="banco"
                       value={values.banco}
-                      className="form-input capitalize w-[140px]"
+                      className="form-input capitalize w-[140px] "
                       list="bank"
                     />
                     <datalist id="bank">
@@ -94,26 +94,26 @@ function VendaColuna({ venda }) {
                       ))}
                     </datalist>
                   </div>
-                  <div>
+                  <div className="">
                     <Field
                       name="quantidade"
-                      className="form-input max-w-[80px] input-number"
+                      className="form-input max-w-[90px]  input-number"
                       type="number"
                       placeholder="Qnt."
                     ></Field>
                   </div>
-                  <div>
+                  <div className="">
                     <Field
                       name="valorVenda"
-                      className="form-input max-w-[100px] input-number"
+                      className="form-input max-w-[110px]  input-number"
                       type="number"
                       placeholder="R$ 100.00"
                     ></Field>
                   </div>
-                  <div className="w-[110px] pt-2 text-center">
+                  <div className="w-[110px] pt-2 text-center ">
                     <Real valor={values.quantidade * venda.custoUnitario} />
                   </div>
-                  <div className="w-[110px] pt-2 text-center">
+                  <div className="w-[110px] pt-2 text-center ">
                     <Real
                       valor={
                         values.valorVenda -
@@ -121,28 +121,28 @@ function VendaColuna({ venda }) {
                       }
                     />
                   </div>
-                  <div className="w-[110px] pt-2 text-center">
+                  <div className="w-[110px] pt-2 text-center ">
                     {values.banco && values.quantidade && values.valorVenda ? (
                       <input
-                        className="form-checkbox"
+                        className="form-checkbox scale-125"
                         type="checkbox"
                         onInput={handleSubmit}
                       />
                     ) : (
                       <input
-                        className="form-checkbox"
+                        className="form-checkbox scale-125"
                         type="checkbox"
                         disabled
                       />
                     )}
                   </div>
-                  <div className="w-[40px] justify-evenly flex p-1 text-center">
+                  <div className="w-[40px] justify-evenly flex p-1 text-center ">
                     <a
                       className="p-2 block hover:cursor-pointer"
                       onClick={() => deletarVenda(venda.id)}
                     >
                       <svg
-                        className="hover:fill-red-600 mx-auto"
+                        className="fill-slate-600 hover:fill-red-600 mx-auto"
                         xmlns="http://www.w3.org/2000/svg"
                         width="20"
                         height="20"
@@ -172,7 +172,7 @@ function VendaColuna({ venda }) {
           <div className="text-center w-[150px]">{venda.userName}</div>
           <form className="flex">
             <div className="text-center w-[90px]">{venda.tipo}</div>
-            <div className="text-center w-[150px] capitalize">{venda.banco}</div>
+            <div className="text-center w-[140px] capitalize">{venda.banco}</div>
             <div className="text-center w-[90px]">{venda.quantidade}</div>
             <div className="text-center w-[110px]">
               <Real valor={venda.valorVenda} />
@@ -193,7 +193,7 @@ function VendaColuna({ venda }) {
                 onClick={() => editVenda(venda.id)}
               >
                 <svg
-                className="mx-auto"
+                className="mx-auto fill-slate-600"
                   xmlns="http://www.w3.org/2000/svg"
                   width="20"
                   height="20"
@@ -203,13 +203,13 @@ function VendaColuna({ venda }) {
                 </svg>
               </a>
             </div>
-            <div className="w-[40px] justify-evenly flex p-1">
+            <div className="w-[40px] justify-evenly flex">
               <a
                 className="p-2 block hover:cursor-pointer"
                 onClick={() => deletarVenda(venda.id)}
               >
                 <svg
-                  className="hover:fill-red-600 mx-auto"
+                  className="fill-slate-600 hover:fill-red-600 mx-auto"
                   xmlns="http://www.w3.org/2000/svg"
                   width="20"
                   height="20"
