@@ -4,7 +4,7 @@ import LoginPage from './pages/login'
 import UserPasswordChange from './pages/password-change'
 import Dashboard from './pages/dashboard'
 import ProtectedRoute from './contexts/ProtectedRoute'
-import Report from './pages/report'
+import Report from './pages/Report'
 import AdminPage from './pages/admin'
 import './css/style.css'
 

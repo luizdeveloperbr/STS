@@ -1,17 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { listarVendas, getTotal, getTotalCusto } from '../firebase/controller';
-import Real from './ComponentReal';
-import moment from 'moment';
-moment.locale('pt-br',{
-  months: 'janeiro_fevereiro_março_abril_maio_junho_julho_agosto_setembro_outubro_novembro_dezembro'.split(
-      '_'
-  )})
-import { useUserAuth } from '../contexts/AuthContext';
+import React, { useEffect, useState } from "react";
+import { listarVendas, getTotal, getTotalCusto } from "../firebase/controller";
+import Real from "./ComponentReal";
+import moment from "moment";
+moment.locale("pt-br", {
+  months:
+    "janeiro_fevereiro_março_abril_maio_junho_julho_agosto_setembro_outubro_novembro_dezembro".split(
+      "_"
+    ),
+});
+import { useUserAuth } from "../contexts/AuthContext";
 
-function Relatorios({ mes }) {
+function Relatorios({ mes, tipo }) {
   const { user } = useUserAuth();
 
-  const [tipo, setTipo] = useState('');
   const [listaMes, setListaMes] = useState([]);
 
   const [totalQuantidadeMes, setTotalQuantidadeMes] = useState(0);
@@ -25,77 +26,52 @@ function Relatorios({ mes }) {
   const filtrarPorTipo = listaMes.filter((venda) => venda.tipo === tipo);
 
   useEffect(() => {
-    const queryMes = moment(mes, 'MMMM').format('YYYY-MM');
-    listarVendas(user.uid, 'mes', queryMes, setListaMes);
+    const queryMes = moment(mes, "MMMM").format("YYYY-MM");
+    listarVendas(user.uid, "mes", queryMes, setListaMes);
   }, []);
 
   useEffect(() => {
-    getTotal(filtrarPorTipo, 'quantidade', setTotalQuantidadeTipo);
-    getTotal(filtrarPorTipo, 'valorVenda', setTotalVendasTipo);
+    getTotal(filtrarPorTipo, "quantidade", setTotalQuantidadeTipo);
+    getTotal(filtrarPorTipo, "valorVenda", setTotalVendasTipo);
     getTotalCusto(filtrarPorTipo, setTotalCustoTipo);
   }, [tipo]);
 
   useEffect(() => {
-    getTotal(listaMes, 'quantidade', setTotalQuantidadeMes);
-    getTotal(listaMes, 'valorVenda', setTotalVendasMes);
+    getTotal(listaMes, "quantidade", setTotalQuantidadeMes);
+    getTotal(listaMes, "valorVenda", setTotalVendasMes);
     getTotalCusto(listaMes, setTotalCustoMes);
   }, [listaMes]);
 
   return (
-    <>
-      {totalQuantidadeMes === 0 ? (
-        <></>
-      ) : (
-        <tbody id="tabela-relatorio">
+        <>
           <tr>
             <td>
-            <a
-                className="capitalize mx-1 py-0 hover:cursor-pointer hover:underline hover:text-blue-400"
-                onClick={() => setTipo('')}
-              >
-                {mes}
-              </a>
+              <span className="capitalize pl-2">{mes}</span>
             </td>
-            <td>
-            <a
-                className="font-bold mx-1 py-0 hover:cursor-pointer"
-                onClick={() => setTipo('R')}
-              >
-                {tipo === 'R' ? (<span className="button-active">R</span>): (<span className="button">R</span>)}
-              </a>
-              <a
-                className="font-bold mx-1 py-0 hover:cursor-pointer"
-                onClick={() => setTipo('N')}
-              >
-                {tipo === 'N' ? (<span className="button-active">N</span>): (<span className="button">N</span>)}
-              </a>
-            </td>
-            <td>{tipo === '' ? totalQuantidadeMes : totalQuantidadeTipo}</td>
+            <td>{tipo === "" ? totalQuantidadeMes : totalQuantidadeTipo}</td>
             <td className="px-2">
-              {tipo === '' ? (
+              {tipo === "" ? (
                 <Real valor={totalVendasMes} />
               ) : (
                 <Real valor={totalVendasTipo} />
               )}
             </td>
             <td className="px-2">
-              {tipo === '' ? (
+              {tipo === "" ? (
                 <Real valor={totalCustoMes} />
               ) : (
                 <Real valor={totalCustoTipo} />
               )}
             </td>
             <td className="px-2">
-              {tipo === '' ? (
+              {tipo === "" ? (
                 <Real valor={totalVendasMes - totalCustoMes} />
               ) : (
                 <Real valor={totalVendasTipo - totalCustoTipo} />
               )}
             </td>
           </tr>
-        </tbody>
-      )}
-    </>
+        </>
   );
 }
 export default Relatorios;

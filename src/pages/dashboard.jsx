@@ -163,9 +163,9 @@ function Dashboard() {
               </div>
             </div>
             <div className="grid grid-cols-12 gap-6">
-              <div className="overflow-x-auto col-span-full xl:col-span-6 bg-white shadow-lg rounded-sm border border-slate-200">
+              <div className="overflow-x-auto col-span-full bg-white shadow-lg rounded-sm border border-slate-200">
                 <header className="px-5 py-4 border-b border-slate-100">
-                  <h2 className="font-semibold text-slate-800">Customers</h2>
+                  <h2 className="font-semibold text-slate-800">Clientes</h2>
                 </header>
                 <div className="tabela table border-collapse">
                   <div

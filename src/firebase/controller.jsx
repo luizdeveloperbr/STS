@@ -11,7 +11,11 @@ export async function listarVendas(id, coluna, valor, setState) {
         querySnapshot.forEach((doc) => {
             arrayDocs.push({ ...doc.data(), id: doc.id })
         });
-        setState(arrayDocs)
+        if(setState === undefined){
+            return arrayDocs
+        }else{
+            setState(arrayDocs)
+        }
     }
 }
 

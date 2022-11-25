@@ -87,7 +87,6 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
           </button>
           {/* Logo */}
           <Link
-            end
             to="/"
             className="block"
           >
@@ -177,7 +176,6 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 }`}
               >
                 <Link
-                  end
                   to="/relatorio"
                   className={`block text-slate-200 hover:text-white truncate transition duration-150 ${
                     pathname.includes("messages") && "hover:text-slate-200"
