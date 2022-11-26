@@ -1,14 +1,37 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 import Relatorios from "../components/Relatorios";
 import Sidebar from "../layout/Sidebar";
 import Header from "../layout/Header";
 import GraphVendas from "../components/BarChart"
 import moment from "moment";
+import { listarVendas } from "../firebase/controller";
+import { useUserAuth } from "../contexts/AuthContext";
+import RelatorioReduce from "../components/RelatoriosReduce";
 
 function Report() {
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
   const [tipo, setTipo] = useState("");
+  const [listaPage, setListaPage] = useState([])
+
+  const {user} = useUserAuth()
+
+ const meses = moment.months()
+
+  useEffect(()=>{
+    var array = []
+    meses.map(async mes => {
+      const selectMes = moment(mes,"MMMM").format("YYYY-MM")
+      const result = await listarVendas(user.uid, "mes",selectMes)
+      array.push({mes, data: result})
+    })
+    setTimeout(() => {
+        setListaPage(array)
+    }, 1500);
+  },[])
+
 
   return (
     <div
@@ -32,6 +55,7 @@ function Report() {
                   <h2 className="font-semibold text-slate-800">
                     Total por Mês
                   </h2>
+                  <p>{listaPage.length}</p>
                 </header>
                 <table>
                   <thead>
@@ -118,10 +142,17 @@ function Report() {
                 <header className="px-5 py-4 border-b border-slate-100">
                   <h2 className="font-semibold text-slate-800">Graficos</h2>
                 </header>
-                <GraphVendas data={ [
-              { x: "janeiro", y: 10 },
-              { x: "fevereiro", y: 20 },
-            ]} />
+                <GraphVendas
+                tipo={tipo}
+                mes='novembro'
+                data={listaPage} />
+              </div>
+              <div className="overflow-x-auto col-span-full xl:col-span-6 bg-white shadow-lg rounded-sm border border-slate-200">
+                <header className="px-5 py-4 border-b border-slate-100">
+                  <h2 className="font-semibold text-slate-800">Reduce</h2>
+                </header>
+                <RelatorioReduce tipo={tipo} data={listaPage} mes='novembro' />
+                <RelatorioReduce tipo={tipo} data={listaPage} mes='outubro' />
               </div>
             </div>
           </div>

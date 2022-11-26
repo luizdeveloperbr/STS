@@ -29,13 +29,13 @@ function Relatorios({ mes, tipo }) {
     const queryMes = moment(mes, "MMMM").format("YYYY-MM");
     listarVendas(user.uid, "mes", queryMes, setListaMes);
   }, []);
-
+  
   useEffect(() => {
     getTotal(filtrarPorTipo, "quantidade", setTotalQuantidadeTipo);
     getTotal(filtrarPorTipo, "valorVenda", setTotalVendasTipo);
     getTotalCusto(filtrarPorTipo, setTotalCustoTipo);
   }, [tipo]);
-
+  
   useEffect(() => {
     getTotal(listaMes, "quantidade", setTotalQuantidadeMes);
     getTotal(listaMes, "valorVenda", setTotalVendasMes);

@@ -1,21 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { getTotal } from "../firebase/controller";
 
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-} from "chart.js";
-import { Line } from "react-chartjs-2";
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement);
-
-
-function GraphVendas({data, mes, tipo}) {
-
-
+function RelatorioReduce({ data, mes, tipo }) {
 
   const [totalVendasTipo, setTotalVendasTipo] = useState(0);
   const [totalVendasMes, setTotalVendasMes] = useState(0);
@@ -33,21 +20,14 @@ function GraphVendas({data, mes, tipo}) {
       const filtrarPorTipo = arrayLista.filter((venda) => venda.tipo === tipo);
       getTotal(filtrarPorTipo, "valorVenda", setTotalVendasTipo);
       getTotal(arrayLista, "valorVenda", setTotalVendasMes);
-    }, 500);
+    }, 1000);
   }, [data,tipo]);
 
-  return (
-    <Line
-      data={{
-        datasets: [
-          {
-            data: [{x: mes,y:totalVendasTipo}],
-            borderColor: "rgb(255, 99, 132)",
-            backgroundColor: "rgba(255, 99, 132, 0.5)",
-          },
-        ],
-      }}
-    />
+
+ return (
+    <>
+      <p>{mes} | total: mes {totalVendasMes} | total: mes {totalVendasTipo}</p>
+    </>
   );
 }
-export default GraphVendas;
+export default RelatorioReduce;
