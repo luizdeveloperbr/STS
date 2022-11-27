@@ -1,6 +1,7 @@
 import { setDoc, collection, doc, deleteDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import React from "react";
+import {useAutoAnimate} from '@formkit/auto-animate/react'
 import Real from "./ComponentReal";
 import { Formik, Form, Field } from "formik";
 import { useUserAuth } from "../contexts/AuthContext";
@@ -8,10 +9,12 @@ import { reloadList } from "../utils/updateList";
 import DataParsed from "./dataParsed";
 
 function VendaColuna({ venda }) {
+
   const { user } = useUserAuth();
   const reloadUpdate = reloadList((state) => state.toggle);
 
   const bancos = ["Santander", "Nubank", "Mercado Pago"];
+  const [parent] = useAutoAnimate()
 
   async function handleSubmitValue(values) {
     const docRef = doc(collection(db, user.uid), venda.id);
@@ -37,6 +40,7 @@ function VendaColuna({ venda }) {
         <div
           className="flex justify-start"
           id="e"
+          ref={parent}
         >
           <Formik
             initialValues={venda}
@@ -161,6 +165,7 @@ function VendaColuna({ venda }) {
         <div
           className="flex justify-start"
           id="c"
+          ref={parent}
         >
           <div className="text-center w-[150px]">
             <DataParsed

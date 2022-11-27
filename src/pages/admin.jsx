@@ -9,9 +9,10 @@ function AdminPage() {
   const [users, setUsers] = useState([]);
   const {user} = useUserAuth()
   const adminID = import.meta.env.VITE_ADMIN_ID
+  const adminUrl = import.meta.env.ADMIN_URL
   useEffect(() => {
     if(user.uid === adminID){
-      fetch('https://admin.meucontroledevendas.net/v1/list-users')
+      fetch(adminUrl)
       .then((response) => response.json())
       .then((data) => setUsers(data));
     }

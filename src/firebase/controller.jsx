@@ -32,20 +32,28 @@ export function dashboardRealtime(id, days, setState) {
     }
 }
 
-export function getTotal(array, prop, setstate) {
+export async function getTotal(array, prop, setstate) {
     let result = []
     array.forEach(item => {
         result.push(item[prop])
     })
     const resultReduce = result.reduce((acumulado, atual) => { return acumulado + atual }, 0)
-    setstate(resultReduce)
+    if(setstate === undefined){
+        return resultReduce
+    }else{
+        setstate(resultReduce)
+    }
 }
 
-export function getTotalCusto(array, setState) {
+export async function getTotalCusto(array, setState) {
     let listaCusto = []
     array.forEach((item) => {
         listaCusto.push(item.custoUnitario * item.quantidade)
     })
-    const custoSomado = listaCusto.reduce((acumulado, atual) => { return acumulado + atual }, 0)
-    setState(custoSomado)
+    const custoSomado = listaCusto.reduce((acumulado, atual) => { return acumulado + atual }, 0);
+    if(setState === undefined){
+        return custoSomado
+    }else{   
+        setState(custoSomado)
+    }
 }

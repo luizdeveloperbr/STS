@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import {useAutoAnimate} from '@formkit/auto-animate/react'
 // import { useNavigate, Link } from 'react-router-dom';
 import { Timestamp, collection, setDoc, doc } from "firebase/firestore";
 import { db } from "../firebase";
@@ -11,11 +12,16 @@ import { Form, Formik, Field } from "formik";
 import Header from "../layout/Header";
 import Sidebar from "../layout/Sidebar";
 // import Trash from "../assets/open-iconic-master/svg/trash.svg";
+
+
 function Dashboard() {
+  
   const [todos, setTodos] = useState([]);
   const [custoUnitario, setCustoUnitario] = useState(4);
   const [reload, setReload] = useState(true);
   // layout sidepanel
+  const [parent] = useAutoAnimate()
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const ontem = moment
@@ -167,7 +173,7 @@ function Dashboard() {
                 <header className="px-5 py-4 border-b border-slate-100">
                   <h2 className="font-semibold text-slate-800">Clientes</h2>
                 </header>
-                <div className="tabela table border-collapse">
+                <div className="tabela table border-collapse" ref={parent}>
                   <div
                     className="flex justify-start font-semibold text-slate-600 bg-slate-50"
                     id="h"

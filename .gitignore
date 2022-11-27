@@ -29,3 +29,4 @@ dist-ssr
 *.sln
 *.sw?
 tailwind.config-orig.js
+src/css/additional-styles/flatpickr.css
