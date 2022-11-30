@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {useAutoAnimate} from '@formkit/auto-animate/react'
+import { query, where, limit, onSnapshot } from "firebase/firestore"
+
 // import { useNavigate, Link } from 'react-router-dom';
 import { Timestamp, collection, setDoc, doc } from "firebase/firestore";
 import { db } from "../firebase";
-import { dashboardRealtime } from "../firebase/controller";
+// import { dashboardRealtime } from "../firebase/controller";
 import { useUserAuth } from "../contexts/AuthContext";
 import VendaColuna from "../components/VendaColuna";
 import moment from "moment";
@@ -47,7 +49,22 @@ function Dashboard() {
   const todosOrder = orderBy(todos, ["created_at"], "desc");
 
   useEffect(() => {
-    dashboardRealtime(user.uid, [ontem, hoje], setTodos);
+    // dashboardRealtime(user.uid, [ontem, hoje], setTodos);
+    if (user.uid !== undefined) {
+      const q = query(collection(db, user.uid), where("datetime", "in", [ontem, hoje]), limit(50));
+     const unsubscribe = onSnapshot(q, (querySnapshot) => {
+          const vendas = [];
+          querySnapshot.forEach((doc) => {
+              vendas.push(doc.data());
+          });
+          console.log('dash_real ativa');
+          setTodos(vendas)
+      },(e) => console.warn(e));
+      return () => {
+          console.log('destruido');
+          unsubscribe()
+      }
+  }
   }, [reload]);
 
   return (
@@ -67,7 +84,7 @@ function Dashboard() {
 
         <main>
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
-            <div className="sm:flex sm:justify-between sm:items-center mb-8">
+            <div className="sm:flex sm:justify-between sm:items-center mb-2">
               <div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-end gap-2">
                 <Formik
                   initialValues={{

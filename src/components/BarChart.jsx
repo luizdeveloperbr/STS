@@ -4,8 +4,8 @@ import { LineChart, Line, CartesianGrid, XAxis, YAxis } from "recharts";
 function GraphVendas({ data, tipo }) {
   return (
     <LineChart
-      width={1200}
-      height={400}
+      width={900}
+      height={450}
       data={data}
       margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
     >

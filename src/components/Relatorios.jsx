@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { listarVendas, getTotal, getTotalCusto } from "../firebase/controller";
+import React from "react";
+// import { listarVendas, getTotal, getTotalCusto } from "../firebase/controller";
 import Real from "./ComponentReal";
 import moment from "moment";
 moment.locale("pt-br", {
@@ -8,67 +8,67 @@ moment.locale("pt-br", {
       "_"
     ),
 });
-import { useUserAuth } from "../contexts/AuthContext";
+// import { useUserAuth } from "../contexts/AuthContext";
 
-function Relatorios({ mes, tipo }) {
-  const { user } = useUserAuth();
+function Relatorios({ mes }) {
+  // const { user } = useUserAuth();
 
-  const [listaMes, setListaMes] = useState([]);
+  // const [listaMes, setListaMes] = useState([]);
 
-  const [totalQuantidadeMes, setTotalQuantidadeMes] = useState(0);
-  const [totalVendasMes, setTotalVendasMes] = useState(0);
-  const [totalCustoMes, setTotalCustoMes] = useState(0);
+  // const [totalQuantidadeMes, setTotalQuantidadeMes] = useState(0);
+  // const [totalVendasMes, setTotalVendasMes] = useState(0);
+  // const [totalCustoMes, setTotalCustoMes] = useState(0);
 
-  const [totalVendasTipo, setTotalVendasTipo] = useState(0);
-  const [totalQuantidadeTipo, setTotalQuantidadeTipo] = useState(0);
-  const [totalCustoTipo, setTotalCustoTipo] = useState(0);
+  // const [totalVendasTipo, setTotalVendasTipo] = useState(0);
+  // const [totalQuantidadeTipo, setTotalQuantidadeTipo] = useState(0);
+  // const [totalCustoTipo, setTotalCustoTipo] = useState(0);
 
-  const filtrarPorTipo = listaMes.filter((venda) => venda.tipo === tipo);
+  // const filtrarPorTipo = listaMes.filter((venda) => venda.tipo === tipo);
 
-  useEffect(() => {
-    const queryMes = moment(mes, "MMMM").format("YYYY-MM");
-    listarVendas(user.uid, "mes", queryMes, setListaMes);
-  }, []);
+  // useEffect(() => {
+  //   const queryMes = moment(mes, "MMMM").format("YYYY-MM");
+  //   listarVendas(user.uid, "mes", queryMes, setListaMes);
+  // }, []);
   
-  useEffect(() => {
-    getTotal(filtrarPorTipo, "quantidade", setTotalQuantidadeTipo);
-    getTotal(filtrarPorTipo, "valorVenda", setTotalVendasTipo);
-    getTotalCusto(filtrarPorTipo, setTotalCustoTipo);
-  }, [tipo]);
+  // useEffect(() => {
+  //   getTotal(filtrarPorTipo, "quantidade", setTotalQuantidadeTipo);
+  //   getTotal(filtrarPorTipo, "valorVenda", setTotalVendasTipo);
+  //   getTotalCusto(filtrarPorTipo, setTotalCustoTipo);
+  // }, [tipo]);
   
-  useEffect(() => {
-    getTotal(listaMes, "quantidade", setTotalQuantidadeMes);
-    getTotal(listaMes, "valorVenda", setTotalVendasMes);
-    getTotalCusto(listaMes, setTotalCustoMes);
-  }, [listaMes]);
+  // useEffect(() => {
+  //   getTotal(listaMes, "quantidade", setTotalQuantidadeMes);
+  //   getTotal(listaMes, "valorVenda", setTotalVendasMes);
+  //   getTotalCusto(listaMes, setTotalCustoMes);
+  // }, [listaMes]);
 
   return (
         <>
           <tr>
             <td>
-              <span className="capitalize pl-2">{mes}</span>
+              <span className="capitalize pl-2">{mes.mes}</span>
             </td>
-            <td>{tipo === "" ? totalQuantidadeMes : totalQuantidadeTipo}</td>
+            <td>X</td>
             <td className="px-2">
-              {tipo === "" ? (
-                <Real valor={totalVendasMes} />
-              ) : (
-                <Real valor={totalVendasTipo} />
-              )}
+              
+                <Real valor={mes.venda_mes} />
+
             </td>
             <td className="px-2">
-              {tipo === "" ? (
+              X
+              {/* {tipo === "" ? (
                 <Real valor={totalCustoMes} />
               ) : (
                 <Real valor={totalCustoTipo} />
-              )}
+              )} */}
             </td>
             <td className="px-2">
-              {tipo === "" ? (
+              X
+              {/* {tipo === "" ? (
                 <Real valor={totalVendasMes - totalCustoMes} />
               ) : (
                 <Real valor={totalVendasTipo - totalCustoTipo} />
-              )}
+              )} */}
             </td>
           </tr>
         </>

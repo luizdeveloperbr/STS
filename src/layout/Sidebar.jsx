@@ -169,6 +169,43 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
               </span>
             </h3>
             <ul className="mt-3">
+              <li
+                className={`px-3 py-2 rounded-sm mb-0.5 last:mb-0 ${
+                  pathname.includes("messages") && "bg-slate-900"
+                }`}
+              >
+                <Link
+                  to="/dashboard"
+                  className={`block text-slate-200 hover:text-white truncate transition duration-150 ${
+                    pathname.includes("messages") && "hover:text-slate-200"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="grow flex items-center">
+                      <svg
+                        className="shrink-0 h-6 w-6"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          className="fill-current text-slate-600 false"
+                          d="M8 1v2H3v19h18V3h-5V1h7v23H1V1z"
+                        ></path>
+                        <path
+                          className="fill-current text-slate-600 false"
+                          d="M1 1h22v23H1z"
+                        ></path>
+                        <path
+                          className="fill-current text-slate-400 false"
+                          d="M15 10.586L16.414 12 11 17.414 7.586 14 9 12.586l2 2zM5 0h14v4H5z"
+                        ></path>
+                      </svg>
+                      <span className="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                        Vendas
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              </li>
               {/* Messages */}
               <li
                 className={`px-3 py-2 rounded-sm mb-0.5 last:mb-0 ${
@@ -184,7 +221,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                   <div className="flex items-center justify-between">
                     <div className="grow flex items-center">
                       <svg
-                      className="fill-slate-400"
+                        className="fill-slate-400"
                         xmlns="http://www.w3.org/2000/svg"
                         width="24"
                         height="24"

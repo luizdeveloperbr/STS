@@ -17,7 +17,7 @@ const LoginPage = () => {
         }
     }, [])
     return (
-        <div className="page-conteiner">
+        <div className="w-96 my-24 mx-auto">
             <Formik
                 initialValues={{
                     email: '',
@@ -26,23 +26,17 @@ const LoginPage = () => {
                 onSubmit={handlerSubmit}
             >{
                     ({ isSubmitting }) => (
-                        <div>
-                            <div className="block text-center mb-3">
-                                <b className="text-lg">Faça o Login</b>
+                        <div className='shadow-lg drop-shadow-lg rounded-md bg-slate-200 p-12'>
+                            <div className="text-center font-bold text-2xl mb-8">
+                                Faça o Login
                             </div>
-                            <Form>
-                                <div className="block text-center">
-                                    <Field required type="email" placeholder='E-mail' className="form-input" name="email" />
-                                </div>
-                                <div className="block text-center">
-                                    <Field required type="password" placeholder='******' className="form-input" name="password" />
-                                </div>
+                            <Form className='flex gap-3 flex-col'>
+                                    <Field required type="email" placeholder='E-mail' className="form-input placeholder:text-zinc-500" name="email" />
+                                    <Field required type="password" placeholder='******' className="form-input placeholder:text-zinc-500" name="password" />
                                 <div className="block text-center mb-3 text-red-700">
-                                    <b>{ error ? <Link  to="/dashboard">{error}</Link> : ""}</b>
+                                    <b>{ error && <Link  to="/dashboard">{error}</Link>}</b>
                                 </div>
-                                <div className="block text-center">
-                                    <button type="submit" className="button disabled:bg-red-600" disabled={isSubmitting}>Login</button>
-                                </div>
+                                    <button type="submit" className="btn bg-zinc-400 disabled:bg-red-600" disabled={isSubmitting}>Login</button>
                             </Form>
                         </div>
                     )

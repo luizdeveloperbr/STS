@@ -1,59 +1,55 @@
-import { collection, query, where, getDocs, limit, onSnapshot } from "firebase/firestore"
-import { db } from "./index"
+import {
+  collection,
+  query,
+  where,
+  getDocs
+} from "firebase/firestore";
+import { db } from "./index";
 
 export async function listarVendas(id, coluna, valor, setState) {
-    if (id === undefined) {
-        setState([])
+  if (id === undefined) {
+    setState([]);
+  } else {
+    const colecao = query(collection(db, id), where(coluna, "==", valor));
+    const querySnapshot = await getDocs(colecao);
+    let arrayDocs = [];
+    querySnapshot.forEach((doc) => {
+      arrayDocs.push({ ...doc.data(), id: doc.id });
+    });
+    if (setState === undefined) {
+      return arrayDocs;
     } else {
-        const colecao = query(collection(db, id), where(coluna, "==", valor))
-        const querySnapshot = await getDocs(colecao);
-        let arrayDocs = []
-        querySnapshot.forEach((doc) => {
-            arrayDocs.push({ ...doc.data(), id: doc.id })
-        })
-        if(setState === undefined){
-            return arrayDocs
-        }else{
-            setState(arrayDocs)
-        }
+      setState(arrayDocs);
     }
+  }
 }
 
-export function dashboardRealtime(id, days, setState) {
-    if (id !== undefined) {
-        const q = query(collection(db, id), where("datetime", "in", days), limit(50));
-        onSnapshot(q, (querySnapshot) => {
-            const vendas = [];
-            querySnapshot.forEach((doc) => {
-                vendas.push(doc.data());
-            });
-            setState(vendas)
-        },(e) => console.warn(e));
-    }
-}
-
-export async function getTotal(array, prop, setstate) {
-    let result = []
-    array.forEach(item => {
-        result.push(item[prop])
-    })
-    const resultReduce = result.reduce((acumulado, atual) => { return acumulado + atual }, 0)
-    if(setstate === undefined){
-        return resultReduce
-    }else{
-        setstate(resultReduce)
-    }
-}
-
-export async function getTotalCusto(array, setState) {
-    let listaCusto = []
+export function getTotal(array, prop) {
+  if (array === undefined) {
+    return 0;
+  } else {
+    let result = [];
     array.forEach((item) => {
-        listaCusto.push(item.custoUnitario * item.quantidade)
-    })
-    const custoSomado = listaCusto.reduce((acumulado, atual) => { return acumulado + atual }, 0);
-    if(setState === undefined){
-        return custoSomado
-    }else{   
-        setState(custoSomado)
-    }
+      result.push(item[prop]);
+    });
+    const resultReduce = result.reduce((acumulado, atual) => {
+      return acumulado + atual;
+    }, 0);
+    return resultReduce;
+  }
+}
+
+export function getTotalCusto(array) {
+  if (array === undefined) {
+    return 0;
+  } else {
+    let listaCusto = [];
+    array.forEach((item) => {
+      listaCusto.push(item.custoUnitario * item.quantidade);
+    });
+    const custoSomado = listaCusto.reduce((acumulado, atual) => {
+      return acumulado + atual;
+    }, 0);
+    return custoSomado;
+  }
 }

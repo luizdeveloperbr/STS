@@ -25,6 +25,8 @@
     "zustand": "^4.0.0"
   },
   "devDependencies": {
+    "@vitejs/plugin-react-refresh": "^1.3.6",
+    "vconsole": "^3.15.0",
     "@tailwindcss/forms": "^0.5.3",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
@@ -32,6 +34,7 @@
     "autoprefixer": "^10.4.7",
     "postcss": "^8.4.14",
     "tailwindcss": "^3.1.4",
-    "vite": "^2.9.9"
+    "vite": "^2.9.9",
+    "vite-plugin-vconsole": "^1.3.1"
   }
 }

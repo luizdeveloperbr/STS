@@ -5,13 +5,13 @@ import {useAutoAnimate} from '@formkit/auto-animate/react'
 import Real from "./ComponentReal";
 import { Formik, Form, Field } from "formik";
 import { useUserAuth } from "../contexts/AuthContext";
-import { reloadList } from "../utils/updateList";
+// import { reloadList } from "../utils/updateList";
 import DataParsed from "./dataParsed";
 
 function VendaColuna({ venda }) {
 
   const { user } = useUserAuth();
-  const reloadUpdate = reloadList((state) => state.toggle);
+  // const reloadUpdate = reloadList((state) => state.toggle);
 
   const bancos = ["Santander", "Nubank", "Mercado Pago"];
   const [parent] = useAutoAnimate()
@@ -19,19 +19,19 @@ function VendaColuna({ venda }) {
   async function handleSubmitValue(values) {
     const docRef = doc(collection(db, user.uid), venda.id);
     await setDoc(docRef, { ...values, confirmado: true }, { merge: true });
-    reloadUpdate();
+    // reloadUpdate();
   }
 
   async function editVenda(vendaId) {
     const docRef = doc(collection(db, user.uid), vendaId);
     await setDoc(docRef, { confirmado: false }, { merge: true });
-    reloadUpdate();
+    // reloadUpdate();
   }
 
   async function deletarVenda(vendaId) {
     alert("Deletar");
     await deleteDoc(doc(db, user.uid, vendaId));
-    reloadUpdate();
+    // reloadUpdate();
   }
 
   return (
