@@ -1,10 +1,10 @@
 import React from "react";
-import { LineChart, Line, CartesianGrid, XAxis, YAxis } from "recharts";
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts";
 
 function GraphVendas({ data, tipo }) {
   return (
     <LineChart
-      width={900}
+      width={840}
       height={450}
       data={data}
       margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
@@ -46,7 +46,8 @@ function GraphVendas({ data, tipo }) {
         stroke="#ccc"
         strokeDasharray="5 5"
       />
-      <XAxis dataKey="mes" />
+      <Tooltip />
+      <XAxis dataKey="mes"/>
       <YAxis />
     </LineChart>
   );

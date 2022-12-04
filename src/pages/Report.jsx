@@ -7,12 +7,6 @@ import moment from "moment";
 import { listarVendas, getTotal, getTotalCusto } from "../firebase/controller";
 import { useUserAuth } from "../contexts/AuthContext";
 import Real from "../components/ComponentReal";
-moment.locale("pt-br", {
-  months:
-    "janeiro_fevereiro_março_abril_maio_junho_julho_agosto_setembro_outubro_novembro_dezembro".split(
-      "_"
-    ),
-});
 
 function Report() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -21,7 +15,7 @@ function Report() {
 
   const [tipo, setTipo] = useState("");
   const [listaPage, setListaPage] = useState([]);
-  // const [listaReduce, setListaReduce] = useState([]);
+  const [total, setTotal] = useState({});
 
   const { user } = useUserAuth();
 
@@ -57,8 +51,9 @@ function Report() {
           const quantidade_tipo_n = getTotal(array_tipo_n, "quantidade");
           const custo_tipo_n = getTotalCusto(array_tipo_n);
           //
+          const mesFormat = moment(mes, "MMMM").format("MMM/YY");
           return {
-            mes,
+            mes: mesFormat,
             venda_mes,
             quantidade_mes,
             custo_mes,
@@ -75,6 +70,48 @@ function Report() {
         });
     });
   }, [reload]);
+
+  useEffect(() => {
+    if (listaPage.length === 12) {
+      // let array_ano = []
+      // listaPage.forEach(item => {
+      //   array_ano.push(item['venda_mes']);
+      // })
+      // setListaReduce(array_ano)
+
+      const total_ano_vnd = getTotal(listaPage, "venda_mes");
+      const total_ano_qnd = getTotal(listaPage, "quantidade_mes");
+      const total_ano_cst = getTotal(listaPage, "custo_mes");
+      const total_ano_qnt_tipo_r = getTotal(listaPage, "quantidade_tipo_r");
+      const total_ano_qnt_tipo_n = getTotal(listaPage, "quantidade_tipo_n");
+      const total_ano_vnd_tipo_n = getTotal(listaPage, "venda_tipo_n");
+      const total_ano_vnd_tipo_r = getTotal(listaPage, "venda_tipo_r");
+      const total_ano_cst_tipo_n = getTotal(listaPage, "custo_tipo_n");
+      const total_ano_cst_tipo_r = getTotal(listaPage, "custo_tipo_r");
+
+      setTotal({
+        total_ano_vnd,
+        total_ano_qnd,
+        total_ano_cst,
+        total_ano_qnt_tipo_r,
+        total_ano_qnt_tipo_n,
+        total_ano_vnd_tipo_n,
+        total_ano_vnd_tipo_r,
+        total_ano_cst_tipo_n,
+        total_ano_cst_tipo_r,
+      });
+      console.log("total_ano_qnt_tipo_r", total_ano_qnt_tipo_r);
+      console.log("total_ano_qnt_tipo_n", total_ano_qnt_tipo_n);
+
+      // Promise.all({
+      //   total_ano_vnd,
+      //   total_ano_qnd,
+      //   total_ano_cst
+      // }).then((all)=>{
+      //   console.log(all)
+      // })
+    }
+  }, [listaPage]);
 
   return (
     <div
@@ -94,91 +131,88 @@ function Report() {
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
             <div className="sm:flex sm:justify-between sm:items-center mb-2">
               <div className="bg-white border-slate-200 border shadow-lg py-3 flex gap-2 justify-center w-full">
-              {listaPage.length < 12 ? (
+                {listaPage.length < 12 ? (
                   <a
                     className="font-bold btn bg-zinc-300 border-black mx-1 hover:cursor-pointer"
                     onClick={() => setReload(!reload)}
                   >
                     Recarregar
                   </a>
-                ): 
-                <div id="botoes-tipo">
-                <>
-                  {tipo === "" ? (
-                    <a
-                      className="font-bold btn bg-zinc-600 text-white border-black mx-1 hover:cursor-pointer"
-                      onClick={() => setTipo("")}
-                    >
-                      Todos
-                    </a>
-                  ) : (
-                    <a
-                      className="font-bold btn bg-zinc-300 border-black mx-1 hover:cursor-pointer"
-                      onClick={() => setTipo("")}
-                    >
-                      Todos
-                    </a>
-                  )}
-                </>
-                <>
-                  {tipo === "R" ? (
-                    <a
-                      className="font-bold btn bg-zinc-600 text-white border-black mx-1 hover:cursor-pointer"
-                      onClick={() => setTipo("R")}
-                    >
-                      Renovação
-                    </a>
-                  ) : (
-                    <a
-                      className="font-bold btn bg-zinc-300 border-black mx-1 hover:cursor-pointer"
-                      onClick={() => setTipo("R")}
-                    >
-                      Renovação
-                    </a>
-                  )}
-                </>
-                <>
-                  {tipo === "N" ? (
-                    <a
-                      className="font-bold btn bg-zinc-600 text-white border-black mx-1 hover:cursor-pointer"
-                      onClick={() => setTipo("N")}
-                    >
-                      Novo
-                    </a>
-                  ) : (
-                    <a
-                      className="font-bold btn bg-zinc-300 border-black mx-1 hover:cursor-pointer"
-                      onClick={() => setTipo("N")}
-                    >
-                      Novo
-                    </a>
-                  )}
-                </>
-                </div>
-}
-        <span className="font-extrabold">|</span>
-            <div id="botoes-bancos">
-            
-                    <a
-                      className="font-bold btn bg-zinc-300 border-black mx-1 hover:cursor-pointer"
-                      // onClick={() => setTipo("R")}
-                    >
-                      Nubank
-                    </a>
+                ) : (
+                  <div id="botoes-tipo">
+                    <>
+                      {tipo === "" ? (
+                        <a
+                          className="font-bold btn bg-zinc-600 text-white border-black mx-1 hover:cursor-pointer"
+                          onClick={() => setTipo("")}
+                        >
+                          Todos
+                        </a>
+                      ) : (
+                        <a
+                          className="font-bold btn bg-zinc-300 border-black mx-1 hover:cursor-pointer"
+                          onClick={() => setTipo("")}
+                        >
+                          Todos
+                        </a>
+                      )}
+                    </>
+                    <>
+                      {tipo === "R" ? (
+                        <a
+                          className="font-bold btn bg-zinc-600 text-white border-black mx-1 hover:cursor-pointer"
+                          onClick={() => setTipo("R")}
+                        >
+                          Renovação
+                        </a>
+                      ) : (
+                        <a
+                          className="font-bold btn bg-zinc-300 border-black mx-1 hover:cursor-pointer"
+                          onClick={() => setTipo("R")}
+                        >
+                          Renovação
+                        </a>
+                      )}
+                    </>
+                    <>
+                      {tipo === "N" ? (
+                        <a
+                          className="font-bold btn bg-zinc-600 text-white border-black mx-1 hover:cursor-pointer"
+                          onClick={() => setTipo("N")}
+                        >
+                          Novo
+                        </a>
+                      ) : (
+                        <a
+                          className="font-bold btn bg-zinc-300 border-black mx-1 hover:cursor-pointer"
+                          onClick={() => setTipo("N")}
+                        >
+                          Novo
+                        </a>
+                      )}
+                    </>
+                  </div>
+                )}
+                <span className="font-extrabold">|</span>
+                <div id="botoes-bancos">
+                  <a
+                    className="font-bold btn bg-zinc-300 border-black mx-1 hover:cursor-pointer"
+                    // onClick={() => setTipo("R")}
+                  >
+                    Nubank
+                  </a>
 
-               
-                    <a
-                      className="font-bold btn bg-zinc-300 border-black mx-1 hover:cursor-pointer"
-                      // onClick={() => setTipo("")}
-                    >
-                      Mercado Pago
-                    </a>
-
+                  <a
+                    className="font-bold btn bg-zinc-300 border-black mx-1 hover:cursor-pointer"
+                    // onClick={() => setTipo("")}
+                  >
+                    Mercado Pago
+                  </a>
                 </div>
               </div>
             </div>
             <div className="grid grid-cols-12 gap-6">
-              <div className="overflow-x-auto col-span-full xl:col-span-6 bg-white shadow-lg rounded-sm border border-slate-200">
+              <div className="overflow-x-auto col-span-full xl:col-span-5 bg-white shadow-lg rounded-sm border border-slate-200">
                 <header className="px-5 py-4 border-b border-slate-100">
                   <h2 className="font-semibold text-slate-800">
                     Total por Mês
@@ -251,10 +285,33 @@ function Report() {
                         </tr>
                       );
                     })}
+                    <tr id="total_foot">
+                      <td>TOTAL ANO</td>
+                      <td>
+                        {tipo === "" ? total.total_ano_qnd : null}
+                        {tipo === "R" ? total.total_ano_qnt_tipo_r : null}
+                        {tipo === "N" ? total.total_ano_qnt_tipo_n : null}
+                      </td>
+                      <td>
+                        {tipo === "" ?  <Real valor={total.total_ano_vnd}        />: null}
+                        {tipo === "R" ? <Real valor={total.total_ano_vnd_tipo_r} /> : null}
+                        {tipo === "N" ? <Real valor={total.total_ano_vnd_tipo_n} />: null}
+                      </td>                      
+                      <td>
+                        {tipo === "" ?  <Real valor={total.total_ano_cst} /> : null}
+                        {tipo === "R" ? <Real valor={total.total_ano_cst_tipo_r} /> : null}
+                        {tipo === "N" ? <Real valor={total.total_ano_cst_tipo_n} /> : null}
+                      </td>     
+                      <td>
+                        {tipo === "" ?  <Real valor={total.total_ano_vnd - total.total_ano_cst} /> : null}
+                        {tipo === "R" ? <Real valor={total.total_ano_vnd_tipo_r - total.total_ano_cst_tipo_r} /> : null}
+                        {tipo === "N" ? <Real valor={total.total_ano_vnd_tipo_n - total.total_ano_cst_tipo_n} /> : null}
+                      </td> 
+                    </tr>
                   </tbody>
                 </table>
               </div>
-              <div className="overflow-x-auto col-span-full xl:col-span-6 bg-white shadow-lg rounded-sm border border-slate-200">
+              <div className="overflow-x-auto col-span-full xl:col-span-7 bg-white shadow-lg rounded-sm border border-slate-200">
                 <header className="px-5 py-4 border-b border-slate-100">
                   <h2 className="font-semibold text-slate-800">Graficos</h2>
                 </header>

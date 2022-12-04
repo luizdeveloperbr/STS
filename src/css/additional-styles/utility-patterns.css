@@ -115,6 +115,9 @@ input[type="search"]::-webkit-search-results-decoration {
 #tabela-relatorio td {
     @apply p-1 font-medium text-lg
 }
+#total_foot td {
+    @apply border border-zinc-300 bg-slate-200 text-center
+}
 table {
     empty-cells: hide;
 }
