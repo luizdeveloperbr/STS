@@ -3,46 +3,86 @@ import {query, where, getDocs, collection} from 'firebase/firestore'
 import {db, auth} from '../firebase'
 import Sidebar from "../layout/Sidebar";
 import Header from "../layout/Header";
-import { useUserAuth } from "../contexts/AuthContext";
-
+// import { useUserAuth } from "../contexts/AuthContext";
+// import { useDebounce } from "react-haiku"
 import { listarVendas } from "../firebase/controller";
 import moment from "moment";
+import { useRef } from "react";
 
 function VendaUser() {
-  const { user } = useUserAuth();
-  const [mesInicial, setMesInicial] = useState(moment(new Date()).format("MM") -1);
+  // const { user } = useUserAuth();
+  const [mesInicial, setMesInicial] = useState( ""/*moment(new Date()).format("MM") -1*/);
   const [mesFinal, setMesFinal] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [userId, setUserId] = useState("");
+  // const [userId, setUserId] = useState("");
+  
   const [userVendas, setUserVendas] = useState([]);
 
-  function vendasUsuario(nome) {
-    listarVendas(user.uid, "userID", nome).then((rsult) => {
-      console.log(rsult);
-      setUserVendas(rsult);
-    });
+  const refNome = useRef({value: ''})
 
+  // const deboucedName = useDebounce(refNome.current.value,2000)
+
+  function handlerChangeName(e){
+    refNome.current.value = e.target.value
   }
+
+  function handlerPressEnter(e){
+    if(e.key === "Enter"){
+      console.log("pressed", refNome.current.value)
+
+     listarVendas(auth.currentUser.uid, "userID", refNome.current.value).then((rsult) => {
+      //  console.log(rsult);
+      const array = []
+      rangeSliced.map(rangeMes => {
+
+        const mesFiltred = rsult.filter(mes => mes.mes === rangeMes);
+        array.push({mes: rangeMes, data: mesFiltred})
+
+      })
+      // console.log(array)
+       setUserVendas(array);
+     });
+    }
+  }
+
+  // function vendasUsuario(nome) {
+  //   listarVendas(user.uid, "userID", nome).then((rsult) => {
+  //     console.log(rsult);
+  //     setUserVendas(rsult);
+  //   });
+
+  // }
+
+
+  useEffect(()=>{
+
+  },[userVendas])
+
+
   const months = moment.months() 
+
   const range = months.map(mes => {
    return moment(mes,"MMMM").format("YYYY-MM")
   })
-  console.log('reload');
+  const rangeSliced = range.slice(mesInicial,mesFinal)
+
+  console.log('reload', rangeSliced);
 
   useEffect(()=>{
-    if(mesInicial && mesFinal){
-      const rangeSliced = range.slice(mesInicial,mesFinal)
-      console.log(rangeSliced);
-      if(rangeSliced.length){
+    console.log('useEffect')
+    // if(mesInicial && mesFinal){
+      console.log("R",rangeSliced);
+      if(rangeSliced.length > 0){
 
       const colecao = query(collection(db,auth.currentUser.uid),where('mes', 'in', rangeSliced ));
       getDocs(colecao).then(querySnapshot => {
         let array = []
-        // console.log(querySnapshot.docs);
         querySnapshot.forEach(doc => {
           array.push({...doc.data(), id: doc.id})
 
         })
+
+
         console.log(array)
         setUserVendas(array)
       })
@@ -50,8 +90,8 @@ function VendaUser() {
       console.log("vazio")
     }
 
-    }
-  },[userId])
+    // }
+  },[])
 
   return (
     <div id="main" className="flex h-screen overflow-hidden">
@@ -62,7 +102,7 @@ function VendaUser() {
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
             <div className="sm:flex sm:justify-between sm:items-center mb-2">
               <div className="bg-white border-slate-200 border shadow-lg py-3 flex gap-2 justify-center w-full">
-                head
+                {/* # {userId} */}
                 <span className="font-extrabold">|</span>
                 <div id="botoes-bancos">
                   <a className="font-bold btn bg-zinc-300 border-black mx-1 hover:cursor-pointer">
@@ -79,23 +119,25 @@ function VendaUser() {
               <div className="overflow-x-auto col-span-full bg-white shadow-lg rounded-sm border border-slate-200">
                 <header className="flex gap-2 px-5 py-4 border-b border-slate-100">
                   <input
-                    type="text"
+                    type="search"
                     placeholder="userId"
                     className="form-input"
-                    onInput={(e) => setUserId(e.target.value)}
-                  />
+                    ref={refNome}
+                    value={refNome.value}
+                    onChange={handlerChangeName}
+                    onKeyDown={handlerPressEnter}
+/>
                   <select className="form-input w-28" onChange={e => setMesInicial(e.target.value)} >
-                    {months.map((mes,index) => <option className="capitalize" value={index}>{mes}</option>)}
+                    {months.map((mes,index) => <option className="capitalize" key={mes} value={index}>{mes}</option>)}
                   </select>
                   <select className="form-input w-28" onChange={e => setMesFinal(e.target.value)} >
-                    {months.map((mes,index) => <option className="capitalize" value={index+1}>{mes}</option>)}
+                    {months.map((mes,index) => <option className="capitalize" key={mes} value={index+1}>{mes}</option>)}
                   </select>
 
                   <button
                     className="btn font-bold btn bg-zinc-300 border-black mx-1"
-                    onClick={() => {
-                      vendasUsuario(userId);
-                    }}>
+                    // onClick={() => {vendasUsuario(userId)}}
+                    >
                     {mesInicial}
                   </button>
                 </header>
