@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from "react";
 import {useAutoAnimate} from '@formkit/auto-animate/react'
 import { query, where, limit, onSnapshot } from "firebase/firestore"
-
-// import { useNavigate, Link } from 'react-router-dom';
 import { Timestamp, collection, setDoc, doc } from "firebase/firestore";
 import { db } from "../firebase";
-// import { dashboardRealtime } from "../firebase/controller";
 import { useUserAuth } from "../contexts/AuthContext";
 import VendaColuna from "../components/VendaColuna";
 import moment from "moment";
@@ -13,7 +10,6 @@ import { orderBy } from "lodash";
 import { Form, Formik, Field } from "formik";
 import Header from "../layout/Header";
 import Sidebar from "../layout/Sidebar";
-// import Trash from "../assets/open-iconic-master/svg/trash.svg";
 
 
 function Dashboard() {
@@ -57,11 +53,9 @@ function Dashboard() {
           querySnapshot.forEach((doc) => {
               vendas.push(doc.data());
           });
-          console.log('dash_real ativa');
           setTodos(vendas)
       },(e) => console.warn(e));
       return () => {
-          console.log('destruido');
           unsubscribe()
       }
   }

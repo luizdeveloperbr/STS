@@ -12,25 +12,31 @@ function Report() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [reload, setReload] = useState(false);
-
+  const [mesInicial, setMesInicial] = useState(0)
+  const [mesFinal, setMesFinal] = useState(0)
   const [tipo, setTipo] = useState("");
   const [listaPage, setListaPage] = useState([]);
   const [total, setTotal] = useState({});
 
   const { user } = useUserAuth();
 
-  // const [parent] = useAutoAnimate();
-  // const meses = moment.months();
+
+  const months = moment.months()
+  const range = months.map((mes) => {
+    return moment(mes, "MMMM").format("YYYY-MM");
+  });
+
+  const rangeSliced = range.slice(mesInicial, mesFinal);
 
   useEffect(() => {
     console.log("reload");
     // gera array com objetos: Ex. {mes: 'janeiro', vm: 12, vr: 7, vn: 5}
-    moment.months().map((mes) => {
+    rangeSliced.map((mes) => {
       // onLoad Page inicia a array vazio
       // a lib moment.js para trasformar no formato salvo no banco de dados
-      const selectMes = moment(mes, "MMMM").format("YYYY-MM");
+      // const selectMes = moment(mes, "MMMM").format("YYYY-MM");
       // query idividual por mes
-      listarVendas(user.uid, "mes", selectMes)
+      listarVendas(user.uid, "mes", mes)
         .then((result) => {
           // organiza o objeto
 
@@ -51,7 +57,7 @@ function Report() {
           const quantidade_tipo_n = getTotal(array_tipo_n, "quantidade");
           const custo_tipo_n = getTotalCusto(array_tipo_n);
           //
-          const mesFormat = moment(mes, "MMMM").format("MMM/YY");
+          const mesFormat = moment(mes, "YYYY-MM").format("MMM/YY");
           return {
             mes: mesFormat,
             venda_mes,
@@ -69,10 +75,10 @@ function Report() {
           setListaPage((prev) => [...prev, array]);
         });
     });
-  }, [reload]);
+  }, [mesFinal]);
 
   useEffect(() => {
-    if (listaPage.length === 12) {
+    // if (listaPage.length === 12) {
       // let array_ano = []
       // listaPage.forEach(item => {
       //   array_ano.push(item['venda_mes']);
@@ -82,27 +88,24 @@ function Report() {
       const total_ano_vnd = getTotal(listaPage, "venda_mes");
       const total_ano_qnd = getTotal(listaPage, "quantidade_mes");
       const total_ano_cst = getTotal(listaPage, "custo_mes");
-      const total_ano_qnt_tipo_r = getTotal(listaPage, "quantidade_tipo_r");
-      const total_ano_qnt_tipo_n = getTotal(listaPage, "quantidade_tipo_n");
-      const total_ano_vnd_tipo_n = getTotal(listaPage, "venda_tipo_n");
       const total_ano_vnd_tipo_r = getTotal(listaPage, "venda_tipo_r");
-      const total_ano_cst_tipo_n = getTotal(listaPage, "custo_tipo_n");
+      const total_ano_qnt_tipo_r = getTotal(listaPage, "quantidade_tipo_r");
       const total_ano_cst_tipo_r = getTotal(listaPage, "custo_tipo_r");
+      const total_ano_vnd_tipo_n = getTotal(listaPage, "venda_tipo_n");
+      const total_ano_qnt_tipo_n = getTotal(listaPage, "quantidade_tipo_n");
+      const total_ano_cst_tipo_n = getTotal(listaPage, "custo_tipo_n");
 
       setTotal({
         total_ano_vnd,
         total_ano_qnd,
         total_ano_cst,
+        total_ano_vnd_tipo_r,
         total_ano_qnt_tipo_r,
+        total_ano_cst_tipo_r,
         total_ano_qnt_tipo_n,
         total_ano_vnd_tipo_n,
-        total_ano_vnd_tipo_r,
         total_ano_cst_tipo_n,
-        total_ano_cst_tipo_r,
       });
-      console.log("total_ano_qnt_tipo_r", total_ano_qnt_tipo_r);
-      console.log("total_ano_qnt_tipo_n", total_ano_qnt_tipo_n);
-
       // Promise.all({
       //   total_ano_vnd,
       //   total_ano_qnd,
@@ -110,7 +113,7 @@ function Report() {
       // }).then((all)=>{
       //   console.log(all)
       // })
-    }
+    // }
   }, [listaPage]);
 
   return (
@@ -131,93 +134,64 @@ function Report() {
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
             <div className="sm:flex sm:justify-between sm:items-center mb-2">
               <div className="bg-white border-slate-200 border shadow-lg py-3 flex gap-2 justify-center w-full">
-                {listaPage.length < 12 ? (
-                  <a
-                    className="font-bold btn bg-zinc-300 border-black mx-1 hover:cursor-pointer"
-                    onClick={() => setReload(!reload)}
-                  >
-                    Recarregar
-                  </a>
-                ) : (
                   <div id="botoes-tipo">
-                    <>
-                      {tipo === "" ? (
                         <a
-                          className="font-bold btn bg-zinc-600 text-white border-black mx-1 hover:cursor-pointer"
+                          className={`${tipo === "" ? "bg-zinc-600 text-white": "bg-zinc-300" } font-bold btn border-black mx-1 hover:cursor-pointer`}
                           onClick={() => setTipo("")}
                         >
                           Todos
                         </a>
-                      ) : (
                         <a
-                          className="font-bold btn bg-zinc-300 border-black mx-1 hover:cursor-pointer"
-                          onClick={() => setTipo("")}
-                        >
-                          Todos
-                        </a>
-                      )}
-                    </>
-                    <>
-                      {tipo === "R" ? (
-                        <a
-                          className="font-bold btn bg-zinc-600 text-white border-black mx-1 hover:cursor-pointer"
+                          className={`${tipo === "R" ? "bg-zinc-600 text-white": "bg-zinc-300" } font-bold btn border-black mx-1 hover:cursor-pointer`}
                           onClick={() => setTipo("R")}
                         >
                           Renovação
                         </a>
-                      ) : (
                         <a
-                          className="font-bold btn bg-zinc-300 border-black mx-1 hover:cursor-pointer"
-                          onClick={() => setTipo("R")}
-                        >
-                          Renovação
-                        </a>
-                      )}
-                    </>
-                    <>
-                      {tipo === "N" ? (
-                        <a
-                          className="font-bold btn bg-zinc-600 text-white border-black mx-1 hover:cursor-pointer"
+                          className={`${tipo === "N" ? "bg-zinc-600 text-white": "bg-zinc-300" } font-bold btn border-black mx-1 hover:cursor-pointer`}
                           onClick={() => setTipo("N")}
                         >
                           Novo
                         </a>
-                      ) : (
-                        <a
-                          className="font-bold btn bg-zinc-300 border-black mx-1 hover:cursor-pointer"
-                          onClick={() => setTipo("N")}
-                        >
-                          Novo
-                        </a>
-                      )}
-                    </>
                   </div>
-                )}
-                <span className="font-extrabold">|</span>
-                <div id="botoes-bancos">
-                  <a
-                    className="font-bold btn bg-zinc-300 border-black mx-1 hover:cursor-pointer"
-                    // onClick={() => setTipo("R")}
-                  >
-                    Nubank
-                  </a>
-
-                  <a
-                    className="font-bold btn bg-zinc-300 border-black mx-1 hover:cursor-pointer"
-                    // onClick={() => setTipo("")}
-                  >
-                    Mercado Pago
-                  </a>
-                </div>
               </div>
             </div>
-            <div className="grid grid-cols-12 gap-6">
+            <div className="grid grid-cols-12 gap-5">
               <div className="overflow-x-auto col-span-full xl:col-span-5 bg-white shadow-lg rounded-sm border border-slate-200">
-                <header className="px-5 py-4 border-b border-slate-100">
-                  <h2 className="font-semibold text-slate-800">
+                <header className="px-5 py-4 border-b flex justify-evenly border-slate-100">
+                  <h2 className="font-semibold text-slate-800 py-2">
                     Total por Mês
                   </h2>
-                  {/* {listaReduce.map(item => <p>{item.mes}</p>)} */}
+                  <select
+                    className="form-input w-28 capitalize"
+                    onChange={(e) => setMesInicial(e.target.value)}>
+                    {months.map((mes, index) => (
+                      <option className="capitalize" key={mes} value={index}>
+                        {mes}
+                      </option>
+                    ))}
+                  </select>
+                  <select
+                    className="form-input w-28 capitalize"
+                    onChange={(e) => setMesFinal(e.target.value)}>
+                    {months.map((mes, index) => (
+                      <option
+                        className="capitalize"
+                        key={mes}
+                        value={index + 1}>
+                        {mes}
+                      </option>
+                    ))}
+                  </select>
+                  <a
+                    className="btn bg-zinc-300 border-black hover:cursor-pointer"
+                    onClick={() => {
+                      setMesInicial("")
+                      setMesFinal("")
+                      setListaPage([])}}
+                  >
+                    X
+                  </a>
                 </header>
                 {/* <RelatorioReduce data={listaReduce} tipo={tipo} /> */}
                 <table className="w-full">
@@ -242,8 +216,8 @@ function Report() {
                           </td>
                           <td>
                             {tipo === "" ? mes.quantidade_mes : null}
-                            {tipo === "R" ? mes.venda_tipo_r : null}
-                            {tipo === "N" ? mes.venda_tipo_n : null}
+                            {tipo === "R" ? mes.quantidade_tipo_r : null}
+                            {tipo === "N" ? mes.quantidade_tipo_n : null}
                           </td>
                           <td className="px-2">
                             {tipo === "" ? (
