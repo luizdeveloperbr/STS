@@ -8,33 +8,32 @@ import { useRef } from "react";
 import Real from "../components/ComponentReal";
 
 function VendaUser() {
-  const [mesInicial, setMesInicial] = useState("");
-  const [mesFinal, setMesFinal] = useState("");
+  const [mesInicial, setMesInicial] = useState(0);
+  const [mesFinal, setMesFinal] = useState(12);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showVendas, setShowVendas] = useState([]);
   const [userVendas, setUserVendas] = useState([]);
 
   const refNome = useRef({ value: "" });
 
-
   function handlerChangeName(e) {
     refNome.current.value = e.target.value;
   }
 
-  function handlerPressEnter(e) {
-    if (e.key === "Enter") {
+  function handlerPressEnter() {
+    // if (e.key === "Enter") {
 
-      listarVendas(auth.currentUser.uid, "userID", refNome.current.value).then(
-        (rsult) => {
-          const array = [];
-          rangeSliced.map((rangeMes) => {
-            const mesFiltred = rsult.filter((mes) => mes.mes === rangeMes);
-            array.push({ mes: rangeMes, data: mesFiltred });
-          });
-          setUserVendas(array);
-        }
-      );
-    }
+    listarVendas(auth.currentUser.uid, "userID", refNome.current.value).then(
+      (rsult) => {
+        const array = [];
+        rangeSliced.map((rangeMes) => {
+          const mesFiltred = rsult.filter((mes) => mes.mes === rangeMes);
+          array.push({ mes: rangeMes, data: mesFiltred });
+        });
+        setUserVendas(array);
+      }
+    );
+    // }
   }
 
   useEffect(() => {
@@ -44,7 +43,11 @@ function VendaUser() {
       const total_venda = getTotal(getData, "valorVenda");
       const total_quantidade = getTotal(getData, "quantidade");
 
-      return { showmes: moment(mes.mes,"YYYY-MM").format("MMMM"), total_venda, total_quantidade };
+      return {
+        showmes: moment(mes.mes, "YYYY-MM").format("MMMM"),
+        total_venda,
+        total_quantidade,
+      };
     });
     setShowVendas(result);
   }, [userVendas]);
@@ -105,16 +108,16 @@ function VendaUser() {
               </div>
             </div> */}
             <div className="grid grid-cols-12 gap-6">
-              <div className="overflow-x-auto col-span-full bg-white shadow-lg rounded-sm border border-slate-200">
+              <div className="overflow-x-auto col-span-6 bg-white shadow-lg rounded-sm border border-slate-200">
                 <header className="flex gap-2 px-5 py-4 border-b border-slate-100">
                   <input
-                    type="search"
+                    type="text"
                     placeholder="userId"
                     className="form-input"
                     ref={refNome}
                     value={refNome.value}
                     onChange={handlerChangeName}
-                    onKeyDown={handlerPressEnter}
+                    // onKeyDown={handlerPressEnter}
                   />
                   <select
                     className="form-input w-28 capitalize"
@@ -137,24 +140,36 @@ function VendaUser() {
                       </option>
                     ))}
                   </select>
+                  <a onClick={handlerPressEnter} className="btn bg-zinc-300 border border-black hover:cursor-pointer">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      className="fill-slate-700"
+                      viewBox="0 0 8 8">
+                      <path d="M3.5 0c-1.93 0-3.5 1.57-3.5 3.5s1.57 3.5 3.5 3.5c.59 0 1.17-.14 1.66-.41a1 1 0 0 0 .13.13l1 1a1.02 1.02 0 1 0 1.44-1.44l-1-1a1 1 0 0 0-.16-.13c.27-.49.44-1.06.44-1.66 0-1.93-1.57-3.5-3.5-3.5zm0 1c1.39 0 2.5 1.11 2.5 2.5 0 .66-.24 1.27-.66 1.72-.01.01-.02.02-.03.03a1 1 0 0 0-.13.13c-.44.4-1.04.63-1.69.63-1.39 0-2.5-1.11-2.5-2.5s1.11-2.5 2.5-2.5z" />
+                    </svg>
+                  </a>
                 </header>
-                <table className="mx-5">
-                  <thead>
+                <table className="m-5 mt-0 w-[500px]">
+                  <thead className="bg-slate-300">
                     <tr>
-                      <th>Mes</th>
-                      <th>Venda</th>
-                      <th>Qnt</th>
+                      <th className="text-left pl-2 border border-black">Mes</th>
+                      <th className="border border-black">Venda</th>
+                      <th className="border border-black">Qnt</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {showVendas.map((cliente,index) => {
+                    {showVendas.map((cliente, index) => {
                       return (
                         <tr key={index}>
-                          <td className="px-2 capitalize">{cliente.showmes}</td>
-                          <td className="px-2 text-center">
+                          <td className="py-1 border border-zinc-500 px-2 capitalize">{cliente.showmes}</td>
+                          <td className="py-1 border border-zinc-500 px-2 text-center">
                             <Real valor={cliente.total_venda} />
                           </td>
-                          <td className="px-2 text-center">{cliente.total_quantidade}</td>
+                          <td className="py-1 border border-zinc-500 px-2 text-center">
+                            {cliente.total_quantidade}
+                          </td>
                         </tr>
                       );
                     })}

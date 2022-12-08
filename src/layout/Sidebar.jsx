@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-
+// import {Tooltip} from "react-tooltip";
 function Sidebar({ sidebarOpen, setSidebarOpen }) {
   const location = useLocation();
   const { pathname } = location;
@@ -91,8 +91,11 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                   x2="100%"
                   y2="108.156%"
                   id="logo-a">
-                  <stop stopColor="#A5B4FC" stopOpacity="0" offset="0%" />
-                  <stop stopColor="#A5B4FC" offset="100%" />
+                  <stop
+                    stopColor="#A5B4FC"
+                    stopOpacity="0"
+                    offset="0%"></stop>
+                  <stop stopColor="#A5B4FC" offset="100%"></stop>
                 </linearGradient>
                 <linearGradient
                   x1="88.638%"
@@ -100,23 +103,23 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                   x2="22.42%"
                   y2="100%"
                   id="logo-b">
-                  <stop stopColor="#38BDF8" stopOpacity="0" offset="0%" />
-                  <stop stopColor="#38BDF8" offset="100%" />
+                  <stop
+                    stopColor="#38BDF8"
+                    stopOpacity="0"
+                    offset="0%"></stop>
+                  <stop stopColor="#38BDF8" offset="100%"></stop>
                 </linearGradient>
               </defs>
-              <rect fill="#6366F1" width="32" height="32" rx="16" />
+              <rect fill="#6366F1" width="32" height="32" rx="16"></rect>
               <path
                 d="M18.277.16C26.035 1.267 32 7.938 32 16c0 8.837-7.163 16-16 16a15.937 15.937 0 01-10.426-3.863L18.277.161z"
-                fill="#4F46E5"
-              />
+                fill="#4F46E5"></path>
               <path
                 d="M7.404 2.503l18.339 26.19A15.93 15.93 0 0116 32C7.163 32 0 24.837 0 16 0 10.327 2.952 5.344 7.404 2.503z"
-                fill="url(#logo-a)"
-              />
+                fill="url(#logo-a)"></path>
               <path
                 d="M2.223 24.14L29.777 7.86A15.926 15.926 0 0132 16c0 8.837-7.163 16-16 16-5.864 0-10.991-3.154-13.777-7.86z"
-                fill="url(#logo-b)"
-              />
+                fill="url(#logo-b)"></path>
             </svg>
           </Link>
         </div>
@@ -137,6 +140,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
             </h3>
             <ul className="mt-3">
               <li
+                id="dashboard"
+                // data-content="Efetuar Venda"
                 className={`px-3 py-2 rounded-sm mb-0.5 last:mb-0 ${
                   pathname.includes("messages") && "bg-slate-900"
                 }`}>
@@ -145,7 +150,9 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                   className={`block text-slate-200 hover:text-white truncate transition duration-150 ${
                     pathname.includes("messages") && "hover:text-slate-200"
                   }`}>
-                  <div className="flex items-center justify-between">
+                  <div
+                    className="flex items-center justify-between"
+                    title="Vendas">
                     <div className="grow flex items-center">
                       <svg className="shrink-0 h-6 w-6" viewBox="0 0 24 24">
                         <path
@@ -158,7 +165,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                           className="fill-current text-slate-400 false"
                           d="M15 10.586L16.414 12 11 17.414 7.586 14 9 12.586l2 2zM5 0h14v4H5z"></path>
                       </svg>
-                      <span className="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                      <span className="text-sm font-medium ml-3 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
                         Vendas
                       </span>
                     </div>
@@ -175,7 +182,9 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                   className={`block text-slate-200 hover:text-white truncate transition duration-150 ${
                     pathname.includes("messages") && "hover:text-slate-200"
                   }`}>
-                  <div className="flex items-center justify-between">
+                  <div
+                    className="flex items-center justify-between"
+                    title="Vendas por Usuario">
                     <div className="grow flex items-center">
                       <svg className="shrink-0 h-6 w-6" viewBox="0 0 24 24">
                         <path
@@ -201,7 +210,9 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                   className={`block text-slate-200 hover:text-white truncate transition duration-150 ${
                     pathname.includes("messages") && "hover:text-slate-200"
                   }`}>
-                  <div className="flex items-center justify-between">
+                  <div
+                    className="flex items-center justify-between"
+                    title="Relatorios">
                     <div className="grow flex items-center">
                       <svg
                         className="fill-slate-400"
@@ -221,10 +232,17 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
             </ul>
           </div>
         </div>
-
+        {/* <Tooltip
+                  anchorId="dashboard"
+                  
+                  place="right"
+                  // events={['hover']}
+                /> */}
         {/* Expand / collapse button */}
         <div className="pt-3 hidden lg:inline-flex 2xl:hidden justify-end mt-auto">
-          <div className="px-3 py-2">
+          <div
+            className="px-3 py-2"
+            title={`${sidebarExpanded ? "Recolher" : "Expandir"}`}>
             <button onClick={() => setSidebarExpanded(!sidebarExpanded)}>
               <span className="sr-only">Expand / collapse sidebar</span>
               <svg

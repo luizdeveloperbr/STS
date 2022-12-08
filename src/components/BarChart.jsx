@@ -4,7 +4,7 @@ import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts"
 function GraphVendas({ data, tipo }) {
   return (
     <LineChart
-      width={820}
+      width={900}
       height={450}
       data={data}
       margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
@@ -48,7 +48,7 @@ function GraphVendas({ data, tipo }) {
       />
       <Tooltip />
       <XAxis dataKey="mes"/>
-      <YAxis />
+      <YAxis unit="/$"/>
     </LineChart>
   );
 }

@@ -113,11 +113,22 @@ input[type="search"]::-webkit-search-results-decoration {
   scrollbar-width: none;  /* Firefox */
 }
 #tabela-relatorio td {
-    @apply p-1 font-medium text-lg
+    @apply p-1
 }
 #total_foot td {
     @apply border border-zinc-300 bg-slate-200 text-center
 }
 table {
     empty-cells: hide;
+}
+.logo {
+    height: 32px;
+    width: 32px;
+    background-color:rgb(100, 116 , 139);
+    border-radius: 50%;
+    background-image: url('./globe.png');
+    background-size: contain;
+}
+#dashboard:hover {
+    content: "dashbord";
 }

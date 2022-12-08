@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Transition from './Transition';
 import {useUserAuth} from "../contexts/AuthContext"
+import { Link } from 'react-router-dom';
 
 
 function UserMenu() {
@@ -11,6 +12,8 @@ function UserMenu() {
   const dropdown = useRef(null);
 
   const {logOut, user} = useUserAuth()
+
+  const isAdmin = import.meta.env.VITE_ADMIN_ID
 
   async function handleSignOut() {
     await logOut();
@@ -71,7 +74,9 @@ function UserMenu() {
         >
           <div className="pt-0.5 pb-2 px-3 mb-1 border-b border-slate-200">
             <div className="font-medium text-slate-800">{user.email}</div>
-            <div className="text-xs text-slate-500 italic">usuario</div>
+            <div className="text-xs text-slate-500 italic">{
+              isAdmin === user.uid ? <Link to="/admin">Alterar Senhas</Link> : "usuario"
+            }</div>
           </div>
           <ul>
             <li>

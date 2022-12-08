@@ -13,7 +13,7 @@ function Report() {
 
   const [reload, setReload] = useState(false);
   const [mesInicial, setMesInicial] = useState(0)
-  const [mesFinal, setMesFinal] = useState(0)
+  const [mesFinal, setMesFinal] = useState(12)
   const [tipo, setTipo] = useState("");
   const [listaPage, setListaPage] = useState([]);
   const [total, setTotal] = useState({});
@@ -156,8 +156,17 @@ function Report() {
                   </div>
               </div>
             </div>
-            <div className="grid grid-cols-12 gap-5">
-              <div className="overflow-x-auto col-span-full xl:col-span-5 bg-white shadow-lg rounded-sm border border-slate-200">
+            <div className="grid grid-cols-12 gap-2">
+            <div className="overflow-x-auto col-span-full bg-white shadow-lg rounded-sm border border-slate-200">
+                <header className="px-5 py-4 border-b border-slate-100">
+                  <h2 className="font-semibold text-slate-800">Graficos</h2>
+                </header>
+                <GraphVendas
+                  data={listaPage}
+                  tipo={tipo}
+                />
+              </div>
+              <div className="overflow-x-auto col-span-full bg-white shadow-lg rounded-sm border border-slate-200">
                 <header className="px-5 py-4 border-b flex justify-evenly border-slate-100">
                   <h2 className="font-semibold text-slate-800 py-2">
                     Total por Mês
@@ -173,7 +182,7 @@ function Report() {
                   </select>
                   <select
                     className="form-input w-28 capitalize"
-                    onChange={(e) => setMesFinal(e.target.value)}>
+                    onInput={(e) => {setListaPage([]);setMesFinal(e.target.value)}}>
                     {months.map((mes, index) => (
                       <option
                         className="capitalize"
@@ -183,15 +192,6 @@ function Report() {
                       </option>
                     ))}
                   </select>
-                  <a
-                    className="btn bg-zinc-300 border-black hover:cursor-pointer"
-                    onClick={() => {
-                      setMesInicial("")
-                      setMesFinal("")
-                      setListaPage([])}}
-                  >
-                    X
-                  </a>
                 </header>
                 {/* <RelatorioReduce data={listaReduce} tipo={tipo} /> */}
                 <table className="w-full">
@@ -284,15 +284,6 @@ function Report() {
                     </tr>
                   </tbody>
                 </table>
-              </div>
-              <div className="overflow-x-auto col-span-full xl:col-span-7 bg-white shadow-lg rounded-sm border border-slate-200">
-                <header className="px-5 py-4 border-b border-slate-100">
-                  <h2 className="font-semibold text-slate-800">Graficos</h2>
-                </header>
-                <GraphVendas
-                  data={listaPage}
-                  tipo={tipo}
-                />
               </div>
             </div>
           </div>
