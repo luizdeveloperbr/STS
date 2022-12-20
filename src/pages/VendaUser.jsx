@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { auth } from "../firebase";
+// import { auth } from "../firebase";
 import Sidebar from "../layout/Sidebar";
 import Header from "../layout/Header";
 import { getTotal, listarVendas } from "../firebase/controller";
@@ -23,7 +23,7 @@ function VendaUser() {
   function handlerPressEnter() {
     // if (e.key === "Enter") {
 
-    listarVendas(auth.currentUser.uid, "userID", refNome.current.value).then(
+    listarVendas( "userID", refNome.current.value).then(
       (rsult) => {
         const array = [];
         rangeSliced.map((rangeMes) => {

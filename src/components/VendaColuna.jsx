@@ -6,7 +6,7 @@ import Real from "./ComponentReal";
 import { Formik, Form, Field } from "formik";
 import { useUserAuth } from "../contexts/AuthContext";
 // import { reloadList } from "../utils/updateList";
-import DataParsed from "./dataParsed";
+import DataParsed from "./DateFormat";
 
 function VendaColuna({ venda }) {
 

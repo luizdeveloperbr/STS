@@ -1,13 +1,13 @@
 import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
-import LoginPage from './pages/login'
-import UserPasswordChange from './pages/password-change'
-import Dashboard from './pages/dashboard'
+import LoginPage from './pages/Login'
+// import UserPasswordChange from './pages/password-change'
+import Dashboard from './pages/Dashboard'
 import ProtectedRoute from './contexts/ProtectedRoute'
-import Report from './pages/Report'
-import AdminPage from './pages/admin'
-import VendaUser from './pages/vendaUser'
+import Relatorios from './pages/Relatorios'
+import AdminPage from './pages/Admin'
+import VendaUser from './pages/VendaUser'
 import './css/style.css'
 import moment from 'moment'
 moment.locale("pt-br", {
@@ -27,7 +27,7 @@ function App() {
             <AdminPage />
           </ProtectedRoute>
         } />
-        <Route path="/trocar-senha" element={<UserPasswordChange />} />
+        {/* <Route path="/trocar-senha" element={<UserPasswordChange />} /> */}
         <Route path="/dashboard" element={
           <ProtectedRoute>
             <Dashboard />
@@ -35,7 +35,7 @@ function App() {
         } />
         <Route path="/relatorio" element={
           <ProtectedRoute>
-            <Report />
+            <Relatorios />
           </ProtectedRoute>
         } />
         <Route path="/venda-por-usuario" element={

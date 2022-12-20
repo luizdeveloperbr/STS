@@ -4,24 +4,20 @@ import {
   where,
   getDocs
 } from "firebase/firestore";
-import { db } from "./index";
+import { db, auth } from "./index";
 
-export async function listarVendas(id, coluna, valor, setState) {
-  if (id === undefined) {
-    setState([]);
-  } else {
-    const colecao = query(collection(db, id), where(coluna, "==", valor));
+export async function listarVendas(coluna, valor) {
+  // if (id === undefined) {
+    // setState([]);
+  // } else {
+    const colecao = query(collection(db, auth.currentUser.uid), where(coluna, "==", valor));
     const querySnapshot = await getDocs(colecao);
     let arrayDocs = [];
     querySnapshot.forEach((doc) => {
       arrayDocs.push({ ...doc.data(), id: doc.id });
     });
-    if (setState === undefined) {
       return arrayDocs;
-    } else {
-      setState(arrayDocs);
-    }
-  }
+  // }
 }
 
 export function getTotal(array, prop) {

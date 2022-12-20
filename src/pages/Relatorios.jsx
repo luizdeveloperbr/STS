@@ -2,23 +2,23 @@ import React, { useState, useEffect } from "react";
 // import { useAutoAnimate } from "@formkit/auto-animate/react";
 import Sidebar from "../layout/Sidebar";
 import Header from "../layout/Header";
-import GraphVendas from "../components/BarChart";
+import GraphVendas from "../components/GraphVendas";
 import moment from "moment";
 import { listarVendas, getTotal, getTotalCusto } from "../firebase/controller";
-import { useUserAuth } from "../contexts/AuthContext";
+// import { useUserAuth } from "../contexts/AuthContext";
 import Real from "../components/ComponentReal";
 
 function Report() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const [reload, setReload] = useState(false);
+  // const [reload, setReload] = useState(false);
   const [mesInicial, setMesInicial] = useState(0)
   const [mesFinal, setMesFinal] = useState(12)
   const [tipo, setTipo] = useState("");
   const [listaPage, setListaPage] = useState([]);
   const [total, setTotal] = useState({});
 
-  const { user } = useUserAuth();
+  // const { user } = useUserAuth();
 
 
   const months = moment.months()
@@ -36,7 +36,7 @@ function Report() {
       // a lib moment.js para trasformar no formato salvo no banco de dados
       // const selectMes = moment(mes, "MMMM").format("YYYY-MM");
       // query idividual por mes
-      listarVendas(user.uid, "mes", mes)
+      listarVendas("mes", mes)
         .then((result) => {
           // organiza o objeto
 

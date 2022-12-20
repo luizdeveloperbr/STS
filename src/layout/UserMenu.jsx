@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Transition from './Transition';
 import {useUserAuth} from "../contexts/AuthContext"
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 function UserMenu() {
@@ -11,6 +11,7 @@ function UserMenu() {
   const trigger = useRef(null);
   const dropdown = useRef(null);
 
+  const navigate = useNavigate()
   const {logOut, user} = useUserAuth()
 
   const isAdmin = import.meta.env.VITE_ADMIN_ID
