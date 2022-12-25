@@ -22,6 +22,7 @@ function Dashboard() {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+
   const ontem = moment
     .unix(Timestamp.now().seconds)
     .subtract(1, "d")
@@ -29,6 +30,8 @@ function Dashboard() {
   const hoje = moment.unix(Timestamp.now().seconds).format("YYYY-MM-DD");
 
   const { user } = useUserAuth();
+
+  // const deboucedValue = useDebounce(custoUnitario,600)
 
   async function novoRegistro(values) {
     const docRef = doc(collection(db, user.uid));
@@ -40,6 +43,13 @@ function Dashboard() {
       custoUnitario,
       id: docRef.id,
     });
+  }
+
+  async function setNewCostValue(value){
+    console.log(value)
+    const userCustoRef = doc(db,user.uid,'custo')
+    await setDoc(userCustoRef,{value: value})
+    setCustoUnitario(value)
   }
 
   const todosOrder = orderBy(todos, ["created_at"], "desc");
@@ -154,7 +164,7 @@ function Dashboard() {
                         Custo Unitario
                         <input
                           required
-                          onChange={(e) => setCustoUnitario(e.target.value)}
+                          onChange={(e) => setNewCostValue(e.target.value)}
                           type="number"
                           step="0.5"
                           min="4"
