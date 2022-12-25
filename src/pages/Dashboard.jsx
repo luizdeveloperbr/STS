@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {useAutoAnimate} from '@formkit/auto-animate/react'
-import { query, where, limit, onSnapshot } from "firebase/firestore"
+import { query, where, limit, onSnapshot, getDoc } from "firebase/firestore"
 import { Timestamp, collection, setDoc, doc } from "firebase/firestore";
 import { db } from "../firebase";
 import { useUserAuth } from "../contexts/AuthContext";
@@ -15,7 +15,7 @@ import Sidebar from "../layout/Sidebar";
 function Dashboard() {
   
   const [todos, setTodos] = useState([]);
-  const [custoUnitario, setCustoUnitario] = useState(4);
+  const [custoUnitario, setCustoUnitario] = useState(0);
   const [reload, setReload] = useState(true);
   // layout sidepanel
   const [parent] = useAutoAnimate()
@@ -43,6 +43,17 @@ function Dashboard() {
   }
 
   const todosOrder = orderBy(todos, ["created_at"], "desc");
+
+  useEffect(()=>{
+    async function getCustoFromServer(){
+
+      const userCustoRef = doc(db,user.uid,'custo')
+      const userCustoDoc = await getDoc(userCustoRef)
+      const userCustoValue = userCustoDoc.data()
+      setCustoUnitario(userCustoValue.value)
+    }
+    getCustoFromServer()
+  },[])
 
   useEffect(() => {
     // dashboardRealtime(user.uid, [ontem, hoje], setTodos);
