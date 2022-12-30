@@ -16,6 +16,7 @@ function Dashboard() {
   
   const [todos, setTodos] = useState([]);
   const [custoUnitario, setCustoUnitario] = useState(0);
+  // const [newCusto, setNewCusto] = useState(0)
   const [reload, setReload] = useState(true);
   // layout sidepanel
   const [parent] = useAutoAnimate()
@@ -45,28 +46,36 @@ function Dashboard() {
     });
   }
 
-  async function setNewCostValue(value){
-    console.log(value)
+
+  async function getCustoFromServer(){
+
     const userCustoRef = doc(db,user.uid,'custo')
-    await setDoc(userCustoRef,{value: value})
-    setCustoUnitario(value)
+    const userCustoDoc = await getDoc(userCustoRef)
+    if(userCustoDoc.exists()){
+      const userCustoValue = userCustoDoc.data()
+      setCustoUnitario(userCustoValue.value)
+    }else{
+      await setDoc(userCustoRef,{value: 4})
+      setCustoUnitario(4)
+    }
   }
+
 
   const todosOrder = orderBy(todos, ["created_at"], "desc");
 
   useEffect(()=>{
-    async function getCustoFromServer(){
+    if(custoUnitario !== 0){
+    //   const userConfirm = confirm("Deseja alterar o valor de custo?")
+    //   if(userConfirm){
+        setDoc(doc(db,user.uid,'custo'),{value: custoUnitario*1 })
+      }
+    // }
+  },[custoUnitario])
 
-      const userCustoRef = doc(db,user.uid,'custo')
-      const userCustoDoc = await getDoc(userCustoRef)
-      const userCustoValue = userCustoDoc.data()
-      setCustoUnitario(userCustoValue.value)
-    }
-    getCustoFromServer()
-  },[])
 
   useEffect(() => {
     // dashboardRealtime(user.uid, [ontem, hoje], setTodos);
+    getCustoFromServer()
     if (user.uid !== undefined) {
       const q = query(collection(db, user.uid), where("datetime", "in", [ontem, hoje]), limit(50));
      const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -164,7 +173,9 @@ function Dashboard() {
                         Custo Unitario
                         <input
                           required
-                          onChange={(e) => setNewCostValue(e.target.value)}
+                          onInput={(e) => {
+                            setCustoUnitario(e.target.value)
+                          }}
                           type="number"
                           step="0.5"
                           min="4"
