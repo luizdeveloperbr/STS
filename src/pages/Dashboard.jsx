@@ -74,7 +74,6 @@ function Dashboard() {
 
 
   useEffect(() => {
-    // dashboardRealtime(user.uid, [ontem, hoje], setTodos);
     getCustoFromServer()
     if (user.uid !== undefined) {
       const q = query(collection(db, user.uid), where("datetime", "in", [ontem, hoje]), limit(50));
