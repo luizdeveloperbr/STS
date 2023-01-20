@@ -7,7 +7,7 @@ function GraphVendas({ data, tipo }) {
       width={900}
       height={450}
       data={data}
-      margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
+      margin={{ top: 5, right: 20, bottom: 5, left: 20 }}
     >
       {
         tipo === "" ? (
@@ -48,7 +48,7 @@ function GraphVendas({ data, tipo }) {
       />
       <Tooltip />
       <XAxis dataKey="mes"/>
-      <YAxis unit="/$"/>
+      <YAxis unit="/$" orientation="right" width={100}/>
     </LineChart>
   );
 }

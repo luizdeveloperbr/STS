@@ -13,11 +13,15 @@ function AdminPage() {
 
   const adminID = import.meta.env.VITE_ADMIN_ID;
 
-  const adminUrl = import.meta.env.VITE_ADMIN_URL;
+  const adminUrl = 'http://localhost:3001/'
+  // const adminUrl = import.meta.env.VITE_ADMIN_URL;
+
   useEffect(() => {
-    if (user.uid === adminID) {
+    // if (user.uid === adminID) {
+    if (true) {
+
       console.log('effect');
-      fetch(`${adminUrl}/list-users`)
+      fetch(`${adminUrl}auth/list-users`)
         .then((response) => response.json())
         .then((data) => {
           setUsers(data)
@@ -37,31 +41,20 @@ function AdminPage() {
                 <header className="flex gap-2 px-5 py-4 border-b border-slate-100">
                   lista de usuarios
                 </header>
-                <table className="w-[900px] m-5 bg-white text-black">
-                  <thead>
-                    <tr>
-                      <th className="border border-gray-700">Email</th>
-                      <th className="border border-gray-700">Senha</th>
-                      <th className="border border-gray-700">Confirmar</th>
-                    </tr>
-                  </thead>
-                  <tbody >
-                    {users.length !== 0 ? (
-                      users.map((userData) => (
-                        <User
-                          key={users.indexOf(userData)}
-                          usuario={userData}
-                        />
-                      ))
-                    ) : (
-                      <tr>
-                        <td colSpan="3" className="h-16">
-                          <div className="ring-of-dots w-1 mx-auto">Carregando...</div>
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+                <div className="px-4">
+                {users.length !== 0 ? (
+                  <>
+                    {users.map((userData) => (
+                      <User
+                        key={users.indexOf(userData)}
+                        usuario={userData}
+                      />
+                    ))}
+                  </>
+                ) : (
+                  <div className="ring-of-dots w-1 mx-auto">Carregando...</div>
+                )}
+                </div>
               </div>
             </div>
           </div>
@@ -69,6 +62,7 @@ function AdminPage() {
       </div>
     </div>
   );
+
 }
 
 export default AdminPage;

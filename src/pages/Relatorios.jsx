@@ -1,120 +1,161 @@
 import React, { useState, useEffect } from "react";
-// import { useAutoAnimate } from "@formkit/auto-animate/react";
+import jsreport from "@jsreport/browser-client"
 import Sidebar from "../layout/Sidebar";
 import Header from "../layout/Header";
 import GraphVendas from "../components/GraphVendas";
 import moment from "moment";
 import { listarVendas, getTotal, getTotalCusto } from "../firebase/controller";
-// import { useUserAuth } from "../contexts/AuthContext";
 import Real from "../components/ComponentReal";
 
 function Report() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // const [reload, setReload] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
   const [mesInicial, setMesInicial] = useState(0)
   const [mesFinal, setMesFinal] = useState(12)
+  const [inputMonth, setInputMonth] = useState(0)
   const [tipo, setTipo] = useState("");
   const [listaPage, setListaPage] = useState([]);
   const [total, setTotal] = useState({});
 
-  // const { user } = useUserAuth();
+  const adminUrl = 'http://localhost:3001/';
+  // const adminUrl = import.meta.env.VITE_ADMIN_URL;
 
+  jsreport.serverUrl = `${adminUrl}reports/`
 
   const months = moment.months()
   const range = months.map((mes) => {
-    return moment(mes, "MMMM").format("YYYY-MM");
+
+    return moment(mes, "MMMM").subtract(inputMonth,'year').format("YYYY-MM");
   });
 
   const rangeSliced = range.slice(mesInicial, mesFinal);
 
+  function getPDF() {
+    jsreport.render({
+      template: {
+        name: 'relatorio-pdf'
+      },
+      data: {
+        meses: listaPage,
+        resumo: total
+      }
+    }).then(async (resp) => {
+      
+      const tile_prefix = moment(mesInicial + 1,"MM").format("MMM")
+      const tile_sufix = moment(mesFinal,"MM").format("MMM")
+      await resp.download(`${tile_prefix} - ${tile_sufix}.pdf`)
+
+    })
+  }
+
+  function getXLSX() {
+    jsreport.render({
+      template: {
+        name: 'relatorio-xlsx'
+      },
+      data: {
+        meses: listaPage,
+        resumo: total
+      }
+    }).then(async (resp) => {
+      
+      const tile_prefix = moment(mesInicial + 1,"MM").format("MMM")
+      const tile_sufix = moment(mesFinal,"MM").format("MMM")
+      await resp.download(`${tile_prefix} - ${tile_sufix}.xlsx`)
+
+    })
+  }
+
   useEffect(() => {
-     console.log("reload");
-     // gera array com objetos: Ex. {mes: 'janeiro', vm: 12, vr: 7, vn: 5}
-     rangeSliced.map((mes) => {
-       // onLoad Page inicia a array vazio
-       // a lib moment.js para trasformar no formato salvo no banco de dados
-       // const selectMes = moment(mes, "MMMM").format("YYYY-MM");
-       // query idividual por mes
-       listarVendas("mes", mes)
-         .then((result) => {
-           // organiza o objeto
- 
-           const venda_mes = getTotal(result, "valorVenda");
-           const quantidade_mes = getTotal(result, "quantidade");
-           const custo_mes = getTotalCusto(result);
-           //
-           const array_tipo_r = result.filter((venda) => venda.tipo === "R");
-           const array_tipo_n = result.filter((venda) => venda.tipo === "N");
- 
-           // soma dos valores de venda com tipo = 'R'
-           const venda_tipo_r = getTotal(array_tipo_r, "valorVenda");
-           const quantidade_tipo_r = getTotal(array_tipo_r, "quantidade");
-           const custo_tipo_r = getTotalCusto(array_tipo_r);
- 
-           // soma dos valoress de venda com tipo = 'N'
-           const venda_tipo_n = getTotal(array_tipo_n, "valorVenda");
-           const quantidade_tipo_n = getTotal(array_tipo_n, "quantidade");
-           const custo_tipo_n = getTotalCusto(array_tipo_n);
-           //
-           const mesFormat = moment(mes, "YYYY-MM").format("MMM/YY");
-           return {
-             mes: mesFormat,
-             venda_mes,
-             quantidade_mes,
-             custo_mes,
-             quantidade_tipo_r,
-             quantidade_tipo_n,
-             venda_tipo_n,
-             venda_tipo_r,
-             custo_tipo_n,
-             custo_tipo_r,
-           };
-         })
-         .then((array) => {
-           setListaPage((prev) => [...prev, array]);
-         });
-     });
-   }, [mesFinal]);
- 
-   useEffect(() => {
-     // if (listaPage.length === 12) {
-     // let array_ano = []
-     // listaPage.forEach(item => {
-     //   array_ano.push(item['venda_mes']);
-     // })
-     // setListaReduce(array_ano)
- 
-     const total_ano_vnd = getTotal(listaPage, "venda_mes");
-     const total_ano_qnd = getTotal(listaPage, "quantidade_mes");
-     const total_ano_cst = getTotal(listaPage, "custo_mes");
-     const total_ano_vnd_tipo_r = getTotal(listaPage, "venda_tipo_r");
-     const total_ano_qnt_tipo_r = getTotal(listaPage, "quantidade_tipo_r");
-     const total_ano_cst_tipo_r = getTotal(listaPage, "custo_tipo_r");
-     const total_ano_vnd_tipo_n = getTotal(listaPage, "venda_tipo_n");
-     const total_ano_qnt_tipo_n = getTotal(listaPage, "quantidade_tipo_n");
-     const total_ano_cst_tipo_n = getTotal(listaPage, "custo_tipo_n");
- 
-     setTotal({
-       total_ano_vnd,
-       total_ano_qnd,
-       total_ano_cst,
-       total_ano_vnd_tipo_r,
-       total_ano_qnt_tipo_r,
-       total_ano_cst_tipo_r,
-       total_ano_qnt_tipo_n,
-       total_ano_vnd_tipo_n,
-       total_ano_cst_tipo_n,
-     });
-     // Promise.all({
-     //   total_ano_vnd,
-     //   total_ano_qnd,
-     //   total_ano_cst
-     // }).then((all)=>{
-     //   console.log(all)
-     // })
-     // }
-   }, [listaPage]);
+    console.log("reload");
+    // gera array com objetos: Ex. {mes: 'janeiro', vm: 12, vr: 7, vn: 5}
+    rangeSliced.map((mes) => {
+      // onLoad Page inicia a array vazio
+      // a lib moment.js para trasformar no formato salvo no banco de dados
+      // const selectMes = moment(mes, "MMMM").format("YYYY-MM");
+      // query idividual por mes
+      listarVendas("mes", mes)
+        .then((result) => {
+          // organiza o objeto
+
+          const venda_mes = getTotal(result, "valorVenda");
+          const quantidade_mes = getTotal(result, "quantidade");
+          const custo_mes = getTotalCusto(result);
+          //
+          const array_tipo_r = result.filter((venda) => venda.tipo === "R");
+          const array_tipo_n = result.filter((venda) => venda.tipo === "N");
+
+          // soma dos valores de venda com tipo = 'R'
+          const venda_tipo_r = getTotal(array_tipo_r, "valorVenda");
+          const quantidade_tipo_r = getTotal(array_tipo_r, "quantidade");
+          const custo_tipo_r = getTotalCusto(array_tipo_r);
+
+          // soma dos valoress de venda com tipo = 'N'
+          const venda_tipo_n = getTotal(array_tipo_n, "valorVenda");
+          const quantidade_tipo_n = getTotal(array_tipo_n, "quantidade");
+          const custo_tipo_n = getTotalCusto(array_tipo_n);
+          //
+          const mesFormat = moment(mes, "YYYY-MM").format("MMM/YY");
+          return {
+            mes: mesFormat,
+            venda_mes,
+            quantidade_mes,
+            custo_mes,
+            quantidade_tipo_r,
+            quantidade_tipo_n,
+            venda_tipo_n,
+            venda_tipo_r,
+            custo_tipo_n,
+            custo_tipo_r,
+          };
+        })
+        .then((array) => {
+          setListaPage((prev) => [...prev, array]);
+        });
+    });
+  }, [mesFinal,inputMonth]);
+
+  useEffect(() => {
+    // if (listaPage.length === 12) {
+    // let array_ano = []
+    // listaPage.forEach(item => {
+    //   array_ano.push(item['venda_mes']);
+    // })
+    // setListaReduce(array_ano)
+
+    const total_ano_vnd = getTotal(listaPage, "venda_mes");
+    const total_ano_qnd = getTotal(listaPage, "quantidade_mes");
+    const total_ano_cst = getTotal(listaPage, "custo_mes");
+    const total_ano_vnd_tipo_r = getTotal(listaPage, "venda_tipo_r");
+    const total_ano_qnt_tipo_r = getTotal(listaPage, "quantidade_tipo_r");
+    const total_ano_cst_tipo_r = getTotal(listaPage, "custo_tipo_r");
+    const total_ano_vnd_tipo_n = getTotal(listaPage, "venda_tipo_n");
+    const total_ano_qnt_tipo_n = getTotal(listaPage, "quantidade_tipo_n");
+    const total_ano_cst_tipo_n = getTotal(listaPage, "custo_tipo_n");
+
+    console.log(listaPage)
+    console.log({total_ano_cst,total_ano_qnd,total_ano_vnd})
+    setTotal({
+      total_ano_vnd,
+      total_ano_qnd,
+      total_ano_cst,
+      total_ano_vnd_tipo_r,
+      total_ano_qnt_tipo_r,
+      total_ano_cst_tipo_r,
+      total_ano_qnt_tipo_n,
+      total_ano_vnd_tipo_n,
+      total_ano_cst_tipo_n,
+    });
+    // Promise.all({
+    //   total_ano_vnd,
+    //   total_ano_qnd,
+    //   total_ano_cst
+    // }).then((all)=>{
+    //   console.log(all)
+    // })
+    // }
+  }, [listaPage]);
 
   return (
     <div
@@ -192,17 +233,21 @@ function Report() {
                       </option>
                     ))}
                   </select>
+                  <select className="form-input w-20" onInput={(e) => {setListaPage([]); setInputMonth(e.target.value) }}>
+                    <option value={1}>2022</option>
+                    <option value={0} selected>2023</option>
+                    </select>
                   <div className="ml-auto">
 
-                  <button className="h-11 w-11 pdf">
-                      
-                  </button>
-                  <button className="h-11 w-11 csv">
-                      
-                  </button>
-                  <button className="h-11 w-11 xls">
-                      
-                  </button>
+                    <button className="h-11 w-11 pdf" onClick={() => getPDF()}>
+
+                    </button>
+                    <button className="h-11 w-11 csv" onClick={() => getXLSX()}>
+
+                    </button>
+                    <button className="h-11 w-11 xls">
+
+                    </button>
                   </div>
                 </header>
                 {/* <RelatorioReduce data={listaReduce} tipo={tipo} /> */}

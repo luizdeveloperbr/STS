@@ -163,5 +163,33 @@ table {
 }
 
 #dashboard:hover {
-    content: "dashbord";
+    content: "dashboard";
+}
+.card {
+  display: grid;
+  grid-template-columns: 100px 300px 60px;
+  align-items: center;
+  border: 1px black solid;
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.icon {
+    margin: auto;
+}
+
+  .change {
+    display: grid;
+  justify-content: center;
+}
+
+  .buttons {
+    margin: 4px;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+
+.send {
+    display: block;
 }
