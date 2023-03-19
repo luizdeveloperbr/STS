@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-// import { Link } from "react-router-dom";
 import { useUserAuth } from "../contexts/AuthContext";
 import User from "../components/UserList";
 import Sidebar from "../layout/Sidebar";
@@ -13,19 +12,15 @@ function AdminPage() {
 
   const adminID = import.meta.env.VITE_ADMIN_ID;
 
-  const adminUrl = 'http://localhost:3001/'
-  // const adminUrl = import.meta.env.VITE_ADMIN_URL;
+  const adminUrl = import.meta.env.VITE_ADMIN_URL;
 
   useEffect(() => {
-    // if (user.uid === adminID) {
-    if (true) {
-
-      console.log('effect');
+    if (user.uid === adminID) {
       fetch(`${adminUrl}auth/list-users`)
         .then((response) => response.json())
         .then((data) => {
           setUsers(data)
-        });
+        }); 
     }
   }, []);
 
@@ -39,20 +34,20 @@ function AdminPage() {
             <div className="grid grid-cols-12 gap-6">
               <div className="overflow-x-auto col-span-full bg-white shadow-lg rounded-sm border border-slate-200">
                 <header className="flex gap-2 px-5 py-4 border-b border-slate-100">
-                  lista de usuarios
+                  Lista de Usuarios
                 </header>
                 <div className="px-4">
                 {users.length !== 0 ? (
                   <>
                     {users.map((userData) => (
-                      <User
-                        key={users.indexOf(userData)}
+                        <User
+                        key={userData.email}
                         usuario={userData}
                       />
                     ))}
                   </>
                 ) : (
-                  <div className="ring-of-dots w-1 mx-auto">Carregando...</div>
+                  <div className="spinning-dots w-1 mx-auto">Carregando...</div>
                 )}
                 </div>
               </div>

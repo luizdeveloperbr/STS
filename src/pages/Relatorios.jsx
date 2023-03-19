@@ -10,7 +10,7 @@ import Real from "../components/ComponentReal";
 function Report() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const [isLoading, setIsLoading] = useState(false)
+  // const [isLoading, setIsLoading] = useState(false)
   const [mesInicial, setMesInicial] = useState(0)
   const [mesFinal, setMesFinal] = useState(12)
   const [inputMonth, setInputMonth] = useState(0)
@@ -18,8 +18,7 @@ function Report() {
   const [listaPage, setListaPage] = useState([]);
   const [total, setTotal] = useState({});
 
-  const adminUrl = 'http://localhost:3001/';
-  // const adminUrl = import.meta.env.VITE_ADMIN_URL;
+  const adminUrl = import.meta.env.VITE_ADMIN_URL;
 
   jsreport.serverUrl = `${adminUrl}reports/`
 
@@ -31,41 +30,23 @@ function Report() {
 
   const rangeSliced = range.slice(mesInicial, mesFinal);
 
-  function getPDF() {
-    jsreport.render({
+ async function DownloadReport(extension) {
+   const resp = await jsreport.render({
       template: {
-        name: 'relatorio-pdf'
+        name: `relatorio-${extension}`
       },
       data: {
         meses: listaPage,
         resumo: total
       }
-    }).then(async (resp) => {
-      
+    })      
       const tile_prefix = moment(mesInicial + 1,"MM").format("MMM")
       const tile_sufix = moment(mesFinal,"MM").format("MMM")
-      await resp.download(`${tile_prefix} - ${tile_sufix}.pdf`)
-
-    })
+     resp.download(`${tile_prefix} - ${tile_sufix}.${extension}`)
+ 
   }
 
-  function getXLSX() {
-    jsreport.render({
-      template: {
-        name: 'relatorio-xlsx'
-      },
-      data: {
-        meses: listaPage,
-        resumo: total
-      }
-    }).then(async (resp) => {
-      
-      const tile_prefix = moment(mesInicial + 1,"MM").format("MMM")
-      const tile_sufix = moment(mesFinal,"MM").format("MMM")
-      await resp.download(`${tile_prefix} - ${tile_sufix}.xlsx`)
 
-    })
-  }
 
   useEffect(() => {
     console.log("reload");
@@ -134,8 +115,6 @@ function Report() {
     const total_ano_qnt_tipo_n = getTotal(listaPage, "quantidade_tipo_n");
     const total_ano_cst_tipo_n = getTotal(listaPage, "custo_tipo_n");
 
-    console.log(listaPage)
-    console.log({total_ano_cst,total_ano_qnd,total_ano_vnd})
     setTotal({
       total_ano_vnd,
       total_ano_qnd,
@@ -198,7 +177,7 @@ function Report() {
               </div>
             </div>
             <div className="grid grid-cols-12 gap-2">
-              <div className="overflow-x-auto col-span-full bg-white shadow-lg rounded-sm border border-slate-200">
+              <div className="overflow-x-auto col-span-7 bg-white shadow-lg rounded-sm border border-slate-200">
                 <header className="px-5 py-4 border-b border-slate-100">
                   <h2 className="font-semibold text-slate-800">Graficos</h2>
                 </header>
@@ -206,6 +185,27 @@ function Report() {
                   data={listaPage}
                   tipo={tipo}
                 />
+              </div>
+              <div className="overflow-x-auto p-3 col-span-5 bg-white shadow-lg rounded-sm border border-slate-200">
+                <header className="px-5 py-4 border-b border-slate-100">
+                  <h2 className="font-semibold text-slate-800">TOP 20 Cliente do Periodo</h2>
+                </header>
+                <div>
+                <table className="w-full text-center">
+                  <thead>
+                    <tr>
+                      <th>username</th>
+                      <th>Qnt de Licenças</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>luiz</td>
+                      <td>99</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
               </div>
               <div className="overflow-x-auto col-span-full bg-white shadow-lg rounded-sm border border-slate-200">
                 <header className="px-5 py-4 border-b flex justify-evenly border-slate-100 gap-4">
@@ -235,17 +235,17 @@ function Report() {
                   </select>
                   <select className="form-input w-20" onInput={(e) => {setListaPage([]); setInputMonth(e.target.value) }}>
                     <option value={1}>2022</option>
-                    <option value={0} selected>2023</option>
+                    <option value={0} defaultValue>2023</option>
                     </select>
                   <div className="ml-auto">
 
-                    <button className="h-11 w-11 pdf" onClick={() => getPDF()}>
+                    <button className="h-11 w-11 pdf" onClick={() => DownloadReport('pdf')}>
 
                     </button>
-                    <button className="h-11 w-11 csv" onClick={() => getXLSX()}>
+                    <button className="h-11 w-11 xls" onClick={() => DownloadReport('xlsx')}>
 
                     </button>
-                    <button className="h-11 w-11 xls">
+                    <button className="h-11 w-11 csv" onClick={() => DownloadReport('csv')}>
 
                     </button>
                   </div>
