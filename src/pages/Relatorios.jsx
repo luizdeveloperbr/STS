@@ -4,9 +4,9 @@ import Sidebar from "../layout/Sidebar";
 import Header from "../layout/Header";
 import GraphVendas from "../components/GraphVendas";
 import moment from "moment";
-import { listarVendas, getTotal, getTotalCusto } from "../firebase/controller";
+import { vendasTotais, listarVendas, getTotal, getTotalCusto } from "../firebase/controller";
 import Real from "../components/ComponentReal";
-
+import {orderBy} from 'lodash'
 function Report() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -17,6 +17,8 @@ function Report() {
   const [tipo, setTipo] = useState("");
   const [listaPage, setListaPage] = useState([]);
   const [total, setTotal] = useState({});
+  // const [filteredList, setFilteredList] = useState([])
+  const [rankinglist, setRankingList] = useState([])
 
   const adminUrl = import.meta.env.VITE_ADMIN_URL;
 
@@ -46,7 +48,24 @@ function Report() {
  
   }
 
+useEffect(() => {
+  setRankingList([])
+  // console.log('sliced', rangeSliced)
+  vendasTotais("mes", rangeSliced ).then(data => {
+    const usernames = [...new Set(data.map((d) => d.userID))]
 
+    const filters = (username) => data.filter((venda) => venda.userID === username)
+
+    const result = usernames.map(filters)
+  
+    result.forEach((item) => {
+      if(item[0].id !== 'custo'){
+        let vnd = getTotal(item, "quantidade")
+        setRankingList((prev) => [...prev, {userid: item[0].userID, venda: vnd}])
+      }
+    })
+  })
+},[listaPage])
 
   useEffect(() => {
     console.log("reload");
@@ -59,6 +78,7 @@ function Report() {
       listarVendas("mes", mes)
         .then((result) => {
           // organiza o objeto
+          // setFilteredList((prev) => [...prev, result])
 
           const venda_mes = getTotal(result, "valorVenda");
           const quantidade_mes = getTotal(result, "quantidade");
@@ -188,21 +208,25 @@ function Report() {
               </div>
               <div className="overflow-x-auto p-3 col-span-5 bg-white shadow-lg rounded-sm border border-slate-200">
                 <header className="px-5 py-4 border-b border-slate-100">
-                  <h2 className="font-semibold text-slate-800">TOP 20 Cliente do Periodo</h2>
+                  <h2 className="font-semibold text-slate-800">TOP 20 Cliente</h2>
                 </header>
                 <div>
                 <table className="w-full text-center">
                   <thead>
                     <tr>
                       <th>username</th>
-                      <th>Qnt de Licenças</th>
+                      <th>Licenças</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>luiz</td>
-                      <td>99</td>
-                    </tr>
+                    {orderBy(rankinglist, ["venda"], 'desc').map((position, index) => {
+                      return (
+                        <tr key={index}>
+                            <td>{position.userid}</td>
+                            <td>{position.venda} Und.</td>
+                        </tr>
+                      )
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -234,8 +258,8 @@ function Report() {
                     ))}
                   </select>
                   <select className="form-input w-20" onInput={(e) => {setListaPage([]); setInputMonth(e.target.value) }}>
-                    <option value={1}>2022</option>
                     <option value={0} defaultValue>2023</option>
+                    <option value={1}>2022</option>
                     </select>
                   <div className="ml-auto">
 

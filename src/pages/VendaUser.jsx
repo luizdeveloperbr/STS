@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 // import { auth } from "../firebase";
 import Sidebar from "../layout/Sidebar";
 import Header from "../layout/Header";
-import { getTotal, listarVendas } from "../firebase/controller";
+import { getTotal, listarVendas, vendasTotais } from "../firebase/controller";
 import moment from "moment";
 import { useRef } from "react";
 import Real from "../components/ComponentReal";
+import { orderBy } from "lodash";
 
 function VendaUser() {
   const [mesInicial, setMesInicial] = useState(0);
@@ -13,7 +14,7 @@ function VendaUser() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showVendas, setShowVendas] = useState([]);
   const [userVendas, setUserVendas] = useState([]);
-
+  const [maiorVendaMes, setMaiorVendaMes] = useState([])
   const refNome = useRef({ value: "" });
 
   function handlerChangeName(e) {
@@ -23,7 +24,7 @@ function VendaUser() {
   function handlerPressEnter() {
     // if (e.key === "Enter") {
 
-    listarVendas( "userID", refNome.current.value).then(
+    listarVendas("userID", refNome.current.value).then(
       (rsult) => {
         const array = [];
         rangeSliced.map((rangeMes) => {
@@ -59,32 +60,21 @@ function VendaUser() {
   });
   const rangeSliced = range.slice(mesInicial, mesFinal);
 
-  // console.log("reload", rangeSliced);
+  useEffect(() => {
+    rangeSliced.map(mes => {
 
-  // useEffect(() => {
-  //   console.log("useEffect");
-  //   // if(mesInicial && mesFinal){
-  //   console.log("R", rangeSliced);
-  //   if (rangeSliced.length > 0) {
-  //     const colecao = query(
-  //       collection(db, auth.currentUser.uid),
-  //       where("mes", "in", rangeSliced)
-  //     );
-  //     getDocs(colecao).then((querySnapshot) => {
-  //       let array = [];
-  //       querySnapshot.forEach((doc) => {
-  //         array.push({ ...doc.data(), id: doc.id });
-  //       });
-
-  //       console.log(array);
-  //       setUserVendas(array);
-  //     });
-  //   } else {
-  //     console.log("vazio");
-  //   }
-
-  //   // }
-  // }, []);
+      listarVendas('mes', mes).then((result) => {
+        const maiorvenda = orderBy(result, ['valorVenda'], 'desc')[0]
+        return {
+          mes: moment(mes).format('MMMM'),
+          userID: maiorvenda.userID,
+          valor: maiorvenda.valorVenda
+        }
+      }).then(data => {
+        setMaiorVendaMes((prev) => [...prev, data])
+      })
+    })
+  }, [])
 
   return (
     <div id="main" className="flex h-screen overflow-hidden">
@@ -93,20 +83,6 @@ function VendaUser() {
         <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
         <main>
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
-            {/* <div className="sm:flex sm:justify-between sm:items-center mb-2">
-              <div className="bg-white border-slate-200 border shadow-lg py-3 flex gap-2 justify-center w-full">
-                <span className="font-extrabold">|</span>
-                <div id="botoes-bancos">
-                  <a className="font-bold btn bg-zinc-300 border-black mx-1 hover:cursor-pointer">
-                    Nubank
-                  </a>
-
-                  <a className="font-bold btn bg-zinc-300 border-black mx-1 hover:cursor-pointer">
-                    Mercado Pago
-                  </a>
-                </div>
-              </div>
-            </div> */}
             <div className="grid grid-cols-12 gap-6">
               <div className="overflow-x-auto col-span-6 bg-white shadow-lg rounded-sm border border-slate-200">
                 <header className="flex gap-2 px-5 py-4 border-b border-slate-100">
@@ -117,7 +93,7 @@ function VendaUser() {
                     ref={refNome}
                     value={refNome.value}
                     onChange={handlerChangeName}
-                    // onKeyDown={handlerPressEnter}
+                  // onKeyDown={handlerPressEnter}
                   />
                   <select
                     className="form-input w-28 capitalize"
@@ -172,6 +148,28 @@ function VendaUser() {
                           </td>
                         </tr>
                       );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+              <div className="overflow-x-auto col-span-6 bg-white text-center shadow-lg rounded-sm border border-slate-200">
+                <table className="m-5 mt-0 w-[500px]">
+                  <thead>
+                    <tr>
+                      <th>Mês</th>
+                      <th>Username</th>
+                      <th>Maior Venda</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {maiorVendaMes.map(item => {
+                      return (
+                        <tr>
+                          <td className="capitalize">{item.mes}</td> 
+                          <td>{item.userID}</td>
+                          <td><Real valor={item.valor} /></td>
+                        </tr>
+                      )
                     })}
                   </tbody>
                 </table>

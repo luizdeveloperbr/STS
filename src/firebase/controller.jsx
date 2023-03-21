@@ -20,6 +20,16 @@ export async function listarVendas(coluna, valor) {
   // }
 }
 
+export async function vendasTotais(coluna, valor){
+  const colecao = query(collection(db, auth.currentUser.uid), where(coluna, "in", valor));
+  const querySnapshot = await getDocs(colecao);
+  let arrayDocs = [];
+  querySnapshot.forEach((doc) => {
+    arrayDocs.push({ ...doc.data(), id: doc.id });
+  });
+    return arrayDocs;
+}
+
 export function getTotal(array, prop) {
   if (array === undefined) {
     return 0;
