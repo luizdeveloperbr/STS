@@ -8,6 +8,7 @@ import ProtectedRoute from './contexts/ProtectedRoute'
 import Relatorios from './pages/Relatorios'
 import AdminPage from './pages/Admin'
 import VendaUser from './pages/VendaUser'
+import Cadastro from './pages/Cadastro'
 import './css/style.css'
 import moment from 'moment'
 moment.locale("pt-br", {
@@ -22,6 +23,7 @@ function App() {
     <AuthProvider>
       <Routes>
         <Route path="/" element={<LoginPage />} />
+        <Route path="/cadastro" element={<Cadastro />} />
         <Route path="/admin" element={
           <ProtectedRoute>
             <AdminPage />
