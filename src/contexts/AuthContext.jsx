@@ -1,6 +1,6 @@
 import React from "react";
 import { createContext, useContext, useState, useEffect } from "react"
-import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
+import { signInWithEmailAndPassword, onAuthStateChanged, signOut, createUserWithEmailAndPassword  } from "firebase/auth";
 import { auth } from "../firebase"
 import { useNavigate } from 'react-router-dom'
 
@@ -34,6 +34,15 @@ export function AuthProvider({ children }) {
     })
   }
 
+  function signUp(email, password) {
+    createUserWithEmailAndPassword(auth,email,password)
+    .then((user) => {
+      setUser(user.user)
+      navigate("/dashboard")
+    })
+    .catch(e => console.log(e))
+  }
+
   function logOut() {
     return signOut(auth)
   }
@@ -53,6 +62,7 @@ export function AuthProvider({ children }) {
     logIn,
     error,
     setError,
+    signUp,
     logOut
   }
 

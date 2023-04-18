@@ -84,8 +84,8 @@ function VendaUser() {
         <main>
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
             <div className="grid grid-cols-12 gap-6">
-              <div className="overflow-x-auto col-span-6 bg-white shadow-lg rounded-sm border border-slate-200">
-                <header className="flex gap-2 px-5 py-4 border-b border-slate-100">
+              <div className="overflow-x-auto col-span-6 bg-white shadow-lg rounded-sm border p-4 border-slate-200">
+                <header className="flex gap-2 pb-4 border-b border-slate-100">
                   <input
                     type="text"
                     placeholder="userId"
@@ -127,7 +127,7 @@ function VendaUser() {
                     </svg>
                   </a>
                 </header>
-                <table className="m-5 mt-0 w-[500px]">
+                <table className="m-auto w-full">
                   <thead className="bg-slate-300">
                     <tr>
                       <th className="text-left pl-2 border border-black">Mes</th>
@@ -152,22 +152,25 @@ function VendaUser() {
                   </tbody>
                 </table>
               </div>
-              <div className="overflow-x-auto col-span-6 bg-white text-center shadow-lg rounded-sm border border-slate-200">
-                <table className="m-5 mt-0 w-[500px]">
-                  <thead>
+              <div className="overflow-x-auto col-span-6 p-4 bg-white shadow-lg rounded-sm border border-slate-200">
+                <header className="pb-4">
+                <h2 class="font-semibold text-slate-800">Maior compra por mês</h2>
+                  </header>
+                <table className="m-auto w-full text-center">
+                  <thead className="bg-slate-300">
                     <tr>
-                      <th>Mês</th>
-                      <th>Username</th>
-                      <th>Maior Venda</th>
+                      <th className="py-1 px-2 border border-black text-left">Mês</th>
+                      <th className="py-1 px-2 border border-black">Username</th>
+                      <th className="py-1 px-2 border border-black">Maior Venda</th>
                     </tr>
                   </thead>
                   <tbody>
                     {maiorVendaMes.map(item => {
                       return (
                         <tr>
-                          <td className="capitalize">{item.mes}</td> 
-                          <td>{item.userID}</td>
-                          <td><Real valor={item.valor} /></td>
+                          <td className="py-1 px-2 border border-zinc-500 capitalize text-left">{item.mes}</td> 
+                          <td className="py-1 px-2 border border-zinc-500">{item.userID}</td>
+                          <td className="py-1 px-2 border border-zinc-500"><Real valor={item.valor} /></td>
                         </tr>
                       )
                     })}

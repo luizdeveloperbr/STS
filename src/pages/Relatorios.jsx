@@ -6,11 +6,11 @@ import GraphVendas from "../components/GraphVendas";
 import moment from "moment";
 import { vendasTotais, listarVendas, getTotal, getTotalCusto } from "../firebase/controller";
 import Real from "../components/ComponentReal";
-import {orderBy} from 'lodash'
+import { orderBy } from 'lodash'
 function Report() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [mesInicial, setMesInicial] = useState(0)
   const [mesFinal, setMesFinal] = useState(12)
   const [inputMonth, setInputMonth] = useState(0)
@@ -27,13 +27,14 @@ function Report() {
   const months = moment.months()
   const range = months.map((mes) => {
 
-    return moment(mes, "MMMM").subtract(inputMonth,'year').format("YYYY-MM");
+    return moment(mes, "MMMM").subtract(inputMonth, 'year').format("YYYY-MM");
   });
 
   const rangeSliced = range.slice(mesInicial, mesFinal);
 
- async function DownloadReport(extension) {
-   const resp = await jsreport.render({
+  async function DownloadReport(extension) {
+    setIsLoading(true)
+    jsreport.render({
       template: {
         name: `relatorio-${extension}`
       },
@@ -41,31 +42,34 @@ function Report() {
         meses: listaPage,
         resumo: total
       }
-    })      
-      const tile_prefix = moment(mesInicial + 1,"MM").format("MMM")
-      const tile_sufix = moment(mesFinal,"MM").format("MMM")
-     resp.download(`${tile_prefix} - ${tile_sufix}.${extension}`)
- 
+    })
+      .then((file) => {
+        const tile_prefix = moment(mesInicial + 1, "MM").format("MMM")
+        const tile_sufix = moment(mesFinal, "MM").format("MMM")
+        file.download(`${tile_prefix} - ${tile_sufix}.${extension}`)
+      }).finally(() => {
+        setIsLoading(false)
+      })
+
   }
 
-useEffect(() => {
-  setRankingList([])
-  // console.log('sliced', rangeSliced)
-  vendasTotais("mes", rangeSliced ).then(data => {
-    const usernames = [...new Set(data.map((d) => d.userID))]
+  useEffect(() => {
+    setRankingList([])
+    vendasTotais("mes", rangeSliced.slice(0, 10)).then(data => {
+      const usernames = [...new Set(data.map((d) => d.userID))]
 
-    const filters = (username) => data.filter((venda) => venda.userID === username)
+      const filters = (username) => data.filter((venda) => venda.userID === username)
 
-    const result = usernames.map(filters)
-  
-    result.forEach((item) => {
-      if(item[0].id !== 'custo'){
-        let vnd = getTotal(item, "quantidade")
-        setRankingList((prev) => [...prev, {userid: item[0].userID, venda: vnd}])
-      }
+      const result = usernames.map(filters)
+
+      result.forEach((item) => {
+        if (item[0].id !== 'custo') {
+          let vnd = getTotal(item, "quantidade")
+          setRankingList((prev) => [...prev, { userid: item[0].userID, venda: vnd }])
+        }
+      })
     })
-  })
-},[listaPage])
+  }, [listaPage])
 
   useEffect(() => {
     console.log("reload");
@@ -115,7 +119,7 @@ useEffect(() => {
           setListaPage((prev) => [...prev, array]);
         });
     });
-  }, [mesFinal,inputMonth]);
+  }, [mesFinal, inputMonth]);
 
   useEffect(() => {
     // if (listaPage.length === 12) {
@@ -207,31 +211,32 @@ useEffect(() => {
                 />
               </div>
               <div className="overflow-x-auto p-3 col-span-5 bg-white shadow-lg rounded-sm border border-slate-200">
-                <header className="px-5 py-4 border-b border-slate-100">
+                <header className="px-5 py-4 border-b border-slate-100 flex justify-between">
                   <h2 className="font-semibold text-slate-800">TOP 20 Cliente</h2>
+                  <h2 className="font-semibold text-slate-800"><span className="capitalize">{moment(rangeSliced[0]).format('MMMM')}</span> | <span className="capitalize">{moment(rangeSliced.slice(-1)[0]).format('MMMM')}</span></h2>
                 </header>
                 <div>
-                <table className="w-full text-center">
-                  <thead>
-                    <tr>
-                      <th>username</th>
-                      <th>Licenças</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {orderBy(rankinglist, ["venda"], 'desc').map((position, index) => {
-                      return (
-                        <tr key={index}>
+                  <table className="w-full text-center">
+                    <thead>
+                      <tr>
+                        <th>username</th>
+                        <th>Licenças</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {orderBy(rankinglist, ["venda"], 'desc').map((position, index) => {
+                        return (
+                          <tr key={index}>
                             <td>{position.userid}</td>
                             <td>{position.venda} Und.</td>
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-              </div>
-              <div className="overflow-x-auto col-span-full bg-white shadow-lg rounded-sm border border-slate-200">
+              <div className={`${isLoading ? 'hover:cursor-progress' : ''} overflow-x-auto col-span-full bg-white shadow-lg rounded-sm border border-slate-200`}>
                 <header className="px-5 py-4 border-b flex justify-evenly border-slate-100 gap-4">
                   <h2 className="font-semibold text-slate-800 py-2">
                     Total por Mês
@@ -257,10 +262,10 @@ useEffect(() => {
                       </option>
                     ))}
                   </select>
-                  <select className="form-input w-20" onInput={(e) => {setListaPage([]); setInputMonth(e.target.value) }}>
+                  <select className="form-input w-20" onInput={(e) => { setListaPage([]); setInputMonth(e.target.value) }}>
                     <option value={0} defaultValue>2023</option>
                     <option value={1}>2022</option>
-                    </select>
+                  </select>
                   <div className="ml-auto">
 
                     <button className="h-11 w-11 pdf" onClick={() => DownloadReport('pdf')}>
