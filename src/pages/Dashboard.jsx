@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {useAutoAnimate} from '@formkit/auto-animate/react'
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { query, where, limit, onSnapshot, getDoc } from "firebase/firestore"
 import { Timestamp, collection, setDoc, doc } from "firebase/firestore";
 import { db } from "../firebase";
@@ -13,9 +13,10 @@ import Sidebar from "../layout/Sidebar";
 
 
 function Dashboard() {
-  
+
   const [todos, setTodos] = useState([]);
   const [custoUnitario, setCustoUnitario] = useState(0);
+  const [mes, setMes] = useState("2023-02")
   // const [newCusto, setNewCusto] = useState(0)
   const [reload, setReload] = useState(true);
   // layout sidepanel
@@ -24,11 +25,15 @@ function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
 
-  const ontem = moment
-    .unix(Timestamp.now().seconds)
-    .subtract(1, "d")
-    .format("YYYY-MM-DD");
-  const hoje = moment.unix(Timestamp.now().seconds).format("YYYY-MM-DD");
+  // const ontem = moment
+  //   .unix(Timestamp.now().seconds)
+  //   .subtract(1, "d")
+  //   .format("YYYY-MM-DD");
+  // const hoje = moment.unix(Timestamp.now().seconds).format("YYYY-MM-DD");
+
+  const selectMes = moment.months().map((mes) => {
+    return moment(mes, "MMMM").format("YYYY-MM");
+  });
 
   const { user } = useUserAuth();
 
@@ -47,15 +52,15 @@ function Dashboard() {
   }
 
 
-  async function getCustoFromServer(){
+  async function getCustoFromServer() {
 
-    const userCustoRef = doc(db,user.uid,'custo')
+    const userCustoRef = doc(db, user.uid, 'custo')
     const userCustoDoc = await getDoc(userCustoRef)
-    if(userCustoDoc.exists()){
+    if (userCustoDoc.exists()) {
       const userCustoValue = userCustoDoc.data()
       setCustoUnitario(userCustoValue.value)
-    }else{
-      await setDoc(userCustoRef,{value: 4})
+    } else {
+      await setDoc(userCustoRef, { value: 4 })
       setCustoUnitario(4)
     }
   }
@@ -63,32 +68,32 @@ function Dashboard() {
 
   const todosOrder = orderBy(todos, ["created_at"], "desc");
 
-  useEffect(()=>{
-    if(custoUnitario !== 0){
-    //   const userConfirm = confirm("Deseja alterar o valor de custo?")
-    //   if(userConfirm){
-        setDoc(doc(db,user.uid,'custo'),{value: custoUnitario*1 })
-      }
+  useEffect(() => {
+    if (custoUnitario !== 0) {
+      //   const userConfirm = confirm("Deseja alterar o valor de custo?")
+      //   if(userConfirm){
+      setDoc(doc(db, user.uid, 'custo'), { value: custoUnitario * 1 })
+    }
     // }
-  },[custoUnitario])
+  }, [custoUnitario])
 
 
   useEffect(() => {
     getCustoFromServer()
     if (user.uid !== undefined) {
-      const q = query(collection(db, user.uid), where("datetime", "in", [ontem, hoje]), limit(50));
-     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-          const vendas = [];
-          querySnapshot.forEach((doc) => {
-              vendas.push(doc.data());
-          });
-          setTodos(vendas)
-      },(e) => console.warn(e));
+      const q = query(collection(db, user.uid), where("mes", "==", mes));
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const vendas = [];
+        querySnapshot.forEach((doc) => {
+          vendas.push(doc.data());
+        });
+        setTodos(vendas)
+      }, (e) => console.warn(e));
       return () => {
-          unsubscribe()
+        unsubscribe()
       }
-  }
-  }, [reload]);
+    }
+  }, [reload, mes]);
 
   return (
     <div
@@ -195,7 +200,7 @@ function Dashboard() {
                           className="min-w-[25px]"
                         >
                           <svg
-                          className="fill-slate-600"
+                            className="fill-slate-600"
                             xmlns="http://www.w3.org/2000/svg"
                             width="32"
                             height="32"
@@ -212,8 +217,13 @@ function Dashboard() {
             </div>
             <div className="grid grid-cols-12 gap-6">
               <div className="overflow-x-auto col-span-full bg-white shadow-lg rounded-sm border border-slate-200">
-                <header className="px-5 py-4 border-b border-slate-100">
+                <header className="px-5 py-4 border-b border-slate-100 flex justify-between">
                   <h2 className="font-semibold text-slate-800">Clientes</h2>
+                  <select className="form-input w-28 capitalize" onInput={(e) => setMes(e.target.value)}>
+                    {selectMes.map((mes,index) => {
+                      return (<option key={index} value={mes}>{moment(mes,"YYYY-MM").format("MMMM")}</option>)
+                    })}
+                  </select>
                 </header>
                 <div className="tabela table border-collapse" ref={parent}>
                   <div
@@ -259,7 +269,7 @@ function Dashboard() {
                             </svg>
                           </a>
                         ) : (
-                          <></>
+                          ""
                         )}
                       </div>
                     </form>

@@ -216,19 +216,19 @@ function Report() {
                   <h2 className="font-semibold text-slate-800"><span className="capitalize">{moment(rangeSliced[0]).format('MMMM')}</span> | <span className="capitalize">{moment(rangeSliced.slice(-1)[0]).format('MMMM')}</span></h2>
                 </header>
                 <div>
-                  <table className="w-full text-center">
-                    <thead>
+                  <table className="w-full m-auto text-center">
+                    <thead className="bg-slate-300" >
                       <tr>
-                        <th>username</th>
-                        <th>Licenças</th>
+                        <th className="py-1 px-2 border border-black text-left">username</th>
+                        <th className="py-1 px-2 border border-black">Licenças</th>
                       </tr>
                     </thead>
                     <tbody>
                       {orderBy(rankinglist, ["venda"], 'desc').map((position, index) => {
                         return (
                           <tr key={index}>
-                            <td>{position.userid}</td>
-                            <td>{position.venda} Und.</td>
+                            <td  className="py-1 px-2 border border-zinc-500 capitalize text-left">{position.userid}</td>
+                            <td  className="py-1 px-2 border border-zinc-500 capitalize">{position.venda} Und.</td>
                           </tr>
                         )
                       })}
@@ -236,7 +236,7 @@ function Report() {
                   </table>
                 </div>
               </div>
-              <div className={`${isLoading ? 'hover:cursor-progress' : ''} overflow-x-auto col-span-full bg-white shadow-lg rounded-sm border border-slate-200`}>
+              <div className={`${isLoading ? 'hover:cursor-progress' : ''} overflow-x-auto col-span-full p-3 bg-white shadow-lg rounded-sm border border-slate-200`}>
                 <header className="px-5 py-4 border-b flex justify-evenly border-slate-100 gap-4">
                   <h2 className="font-semibold text-slate-800 py-2">
                     Total por Mês
@@ -280,14 +280,14 @@ function Report() {
                   </div>
                 </header>
                 {/* <RelatorioReduce data={listaReduce} tipo={tipo} /> */}
-                <table className="w-full">
-                  <thead>
+                <table className="w-full m-auto text-center">
+                  <thead className="bg-slate-300">
                     <tr>
-                      <th>Mês</th>
-                      <th>Qnt.</th>
-                      <th>Venda</th>
-                      <th>Custo</th>
-                      <th>Lucro</th>
+                      <th className="py-1 px-2 border border-black text-left">Mês</th>
+                      <th className="py-1 px-2 border border-black">Qnt.</th>
+                      <th className="py-1 px-2 border border-black">Venda</th>
+                      <th className="py-1 px-2 border border-black">Custo</th>
+                      <th className="py-1 px-2 border border-black">Lucro</th>
                     </tr>
                   </thead>
                   <tbody id="tabela-relatorio">
@@ -297,15 +297,15 @@ function Report() {
                           key={key}
                           className="text-center"
                         >
-                          <td>
-                            <span className="capitalize pl-2">{mes.mes}</span>
+                          <td className="py-1 px-2 border border-zinc-500 capitalize text-left">
+                            {mes.mes}
                           </td>
-                          <td>
+                          <td className="py-1 px-2 border border-zinc-500">
                             {tipo === "" ? mes.quantidade_mes : null}
                             {tipo === "R" ? mes.quantidade_tipo_r : null}
                             {tipo === "N" ? mes.quantidade_tipo_n : null}
                           </td>
-                          <td className="px-2">
+                          <td  className="py-1 px-2 border border-zinc-500">
                             {tipo === "" ? (
                               <Real valor={mes.venda_mes} />
                             ) : null}
@@ -316,7 +316,7 @@ function Report() {
                               <Real valor={mes.venda_tipo_n} />
                             ) : null}
                           </td>
-                          <td className="px-2">
+                          <td  className="py-1 px-2 border border-zinc-500">
                             {tipo === "" ? (
                               <Real valor={mes.custo_mes} />
                             ) : null}
@@ -327,7 +327,7 @@ function Report() {
                               <Real valor={mes.custo_tipo_n} />
                             ) : null}
                           </td>
-                          <td className="px-2">
+                          <td  className="py-1 px-2 border border-zinc-500">
                             {tipo === "" && mes.venda_mes !== undefined ? (
                               <Real valor={mes.venda_mes - mes.custo_mes} />
                             ) : null}
