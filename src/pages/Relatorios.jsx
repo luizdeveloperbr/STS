@@ -212,7 +212,7 @@ function Report() {
               </div>
               <div className="overflow-x-auto p-3 col-span-5 bg-white shadow-lg rounded-sm border border-slate-200">
                 <header className="px-5 py-4 border-b border-slate-100 flex justify-between">
-                  <h2 className="font-semibold text-slate-800">TOP 20 Cliente</h2>
+                  <h2 className="font-semibold text-slate-800">TOP 10 Cliente</h2>
                   <h2 className="font-semibold text-slate-800"><span className="capitalize">{moment(rangeSliced[0]).format('MMMM')}</span> | <span className="capitalize">{moment(rangeSliced.slice(-1)[0]).format('MMMM')}</span></h2>
                 </header>
                 <div>

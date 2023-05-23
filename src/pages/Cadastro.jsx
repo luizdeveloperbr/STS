@@ -1,45 +1,63 @@
-import React, {useRef} from 'react'
-import { useUserAuth } from '../contexts/AuthContext'
-import { Formik, Field, Form } from 'formik'
-import { useNavigate } from "react-router-dom"
+import { useState } from "react"
+//import { AccountForm } from "../hook/AccountForm"
+import { useMultistepForm } from "../hook/useMultistepForm"
+import { UserForm } from "../hook/UserForm"
+// import { CardForm } from "../hook/CardForm"
+import {useUserAuth} from '../contexts/AuthContext'
 
-function Cadastro() {
-    const navigate = useNavigate()
-    const { signUp } = useUserAuth()
-    const confirm = useRef("")
-    function handlerSignup(values) {
-        if(values.password !== confirm.current.value){
-            alert('senhas precisam ser iguais')
-            navigate("/")
-        }else{
-            signUp(values.email, values.password)
-        }
-    }
-
-    return (
-        <div className="w-96 my-24 mx-auto">
-            <Formik initialValues={{
-                displayName: "",
-                password: "",
-                email: ""
-
-            }} onSubmit={handlerSignup}>
-                {({ values }) => (
-                    <div className='shadow-lg drop-shadow-lg rounded-md bg-slate-200 p-12'>
-                        <div className="text-center font-bold text-2xl mb-8">
-                            Cadastre-se
-                        </div>
-                        <Form className='flex gap-3 flex-col'>
-                            <Field type="text" className="form-input" placeholder="Nome" name="displayName" />
-                            <Field required type="email" placeholder='E-mail' className="form-input" name="email" />
-                            <input required type="password" placeholder='Senha' ref={confirm} className="form-input" name="c-password" />
-                            <Field required type="password" placeholder='Confirme a Senha' className="form-input" name="password" />
-                            <button type="submit" className="btn bg-zinc-400 disabled:bg-red-600" disabled={values.password !== confirm.current.value} >Enviar</button>
-                        </Form>
-                    </div>
-                )}
-            </Formik>
-        </div>
-    )
+const INITIAL_DATA = {
+  nome: "",
+  email: "",
+  password: "",
 }
-export default Cadastro
+
+function PageF() {
+
+  const [data, setData] = useState(INITIAL_DATA)
+  function updateFields(fields) {
+    setData(prev => {
+      return { ...prev, ...fields }
+    })
+  }
+
+  const { signUp } = useUserAuth()
+  
+  function onSubmit(e) {
+    e.preventDefault()
+    if (!isLastStep) return next()
+    signUp(data.email, data.password)
+  }
+
+  const { steps, currentStepIndex, step, isFirstStep, isLastStep, back, next } =
+    useMultistepForm([
+      <UserForm {...data} updateFields={updateFields} />,
+   // <AccountForm {...data} updateFields={updateFields} />,
+    // <CardForm {...data} updateFields={updateFields}/>
+    ])
+
+  return (
+    <div className="w-[600px] my-24 mx-auto">
+      <form onSubmit={onSubmit}
+        className='shadow-lg drop-shadow-lg rounded-md bg-slate-200 p-12'
+        
+      >
+        <div
+          className="w-full text-end"
+        >
+          {currentStepIndex + 1} / {steps.length}
+        </div>
+        {step}
+        <div>
+          {!isFirstStep && (
+            <button type="button" onClick={back} className="btn mr-2 bg-gray-300">
+              Voltar
+            </button>
+          )}
+          <button className="btn bg-gray-300 ml-0 m-2" type="submit">{isLastStep ? "Finalizar" : "Proximo"}</button>
+        </div>
+      </form>
+    </div>
+  )
+}
+
+export default PageF

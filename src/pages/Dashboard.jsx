@@ -16,7 +16,7 @@ function Dashboard() {
 
   const [todos, setTodos] = useState([]);
   const [custoUnitario, setCustoUnitario] = useState(0);
-  const [mes, setMes] = useState("2023-02")
+  const [mes, setMes] = useState(moment().format('YYYY-MM'))
   // const [newCusto, setNewCusto] = useState(0)
   const [reload, setReload] = useState(true);
   // layout sidepanel
