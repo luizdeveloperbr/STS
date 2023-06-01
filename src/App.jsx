@@ -23,7 +23,7 @@ function App() {
     <AuthProvider>
       <Routes>
         <Route path="/" element={<LoginPage />} />
-        <Route path="/cadastro" element={<Cadastro />} />
+        <Route path="/admin/cadastro" element={<ProtectedRoute><Cadastro /></ProtectedRoute>} />
         <Route path="/admin" element={
           <ProtectedRoute>
             <AdminPage />

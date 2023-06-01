@@ -4,6 +4,7 @@ import { useMultistepForm } from "../hook/useMultistepForm"
 import { UserForm } from "../hook/UserForm"
 // import { CardForm } from "../hook/CardForm"
 import {useUserAuth} from '../contexts/AuthContext'
+import { useNavigate } from "react-router-dom"
 
 const INITIAL_DATA = {
   nome: "",
@@ -12,6 +13,8 @@ const INITIAL_DATA = {
 }
 
 function PageF() {
+
+  const navegate = useNavigate()
 
   const [data, setData] = useState(INITIAL_DATA)
   function updateFields(fields) {
@@ -53,6 +56,8 @@ function PageF() {
               Voltar
             </button>
           )}
+          <button className="btn bg-gray-300 ml-0 m-2" onClick={() => {navegate(-1)}}>Voltar</button>
+          
           <button className="btn bg-gray-300 ml-0 m-2" type="submit">{isLastStep ? "Finalizar" : "Proximo"}</button>
         </div>
       </form>

@@ -3,10 +3,12 @@ import { useUserAuth } from "../contexts/AuthContext";
 import User from "../components/UserList";
 import Sidebar from "../layout/Sidebar";
 import Header from "../layout/Header";
+import { Link } from "react-router-dom";
 
 function AdminPage() {
   const [users, setUsers] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [reload, setReload ] = useState(false)
 
   const { user } = useUserAuth();
 
@@ -15,14 +17,15 @@ function AdminPage() {
   const adminUrl = import.meta.env.VITE_ADMIN_URL;
 
   useEffect(() => {
+    setUsers([])
     if (user.uid === adminID) {
-      fetch(`${adminUrl}auth/list-users`)
+      fetch(`${adminUrl}user/all`)
         .then((response) => response.json())
         .then((data) => {
           setUsers(data)
         }); 
     }
-  }, []);
+  }, [reload]);
 
   return (
     <div id="main" className="flex h-screen overflow-hidden">
@@ -35,6 +38,7 @@ function AdminPage() {
               <div className="overflow-x-auto col-span-full bg-white shadow-lg rounded-sm border border-slate-200">
                 <header className="flex gap-2 px-5 py-4 border-b border-slate-100">
                   Lista de Usuarios
+                  <Link className="btn bg-slate-400" to="/admin/cadastro">Novo</Link>
                 </header>
                 <div className="px-4">
                 {users.length !== 0 ? (
@@ -43,6 +47,8 @@ function AdminPage() {
                         <User
                         key={userData.email}
                         usuario={userData}
+                        reload={setReload}
+                        state={reload}
                       />
                     ))}
                   </>

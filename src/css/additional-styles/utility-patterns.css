@@ -192,8 +192,8 @@ table {
 }
 .card {
   display: grid;
-  grid-template-columns: 100px 300px 60px;
-  align-items: center;
+  grid-template-columns: 150px 300px 60px;
+  align-items: end;
   border: 1px black solid;
   border-radius: 8px;
   padding: 4px;
@@ -212,10 +212,11 @@ table {
   .buttons {
     margin: 4px;
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
   gap: 4px;
 }
 
 .send {
-    display: block;
+    display: grid;
+    gap: 6px;
 }

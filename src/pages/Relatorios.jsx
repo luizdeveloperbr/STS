@@ -201,7 +201,7 @@ function Report() {
               </div>
             </div>
             <div className="grid grid-cols-12 gap-2">
-              <div className="overflow-x-auto col-span-7 bg-white shadow-lg rounded-sm border border-slate-200">
+              <div className="overflow-x-auto col-span-9 bg-white shadow-lg rounded-sm border border-slate-200">
                 <header className="px-5 py-4 border-b border-slate-100">
                   <h2 className="font-semibold text-slate-800">Graficos</h2>
                 </header>
@@ -210,10 +210,10 @@ function Report() {
                   tipo={tipo}
                 />
               </div>
-              <div className="overflow-x-auto p-3 col-span-5 bg-white shadow-lg rounded-sm border border-slate-200">
+              <div className="overflow-x-auto p-3 col-span-3 bg-white shadow-lg rounded-sm border border-slate-200">
                 <header className="px-5 py-4 border-b border-slate-100 flex justify-between">
                   <h2 className="font-semibold text-slate-800">TOP 10 Cliente</h2>
-                  <h2 className="font-semibold text-slate-800"><span className="capitalize">{moment(rangeSliced[0]).format('MMMM')}</span> | <span className="capitalize">{moment(rangeSliced.slice(-1)[0]).format('MMMM')}</span></h2>
+                  <h2 className="font-semibold text-slate-800"><span className="capitalize">{moment(rangeSliced[0]).format('MMM')}</span> | <span className="capitalize">{moment(rangeSliced.slice(-1)[0]).format('MMM')}</span></h2>
                 </header>
                 <div>
                   <table className="w-full m-auto text-center">
@@ -224,7 +224,7 @@ function Report() {
                       </tr>
                     </thead>
                     <tbody>
-                      {orderBy(rankinglist, ["venda"], 'desc').map((position, index) => {
+                      {orderBy(rankinglist.slice(0,10), ["venda"], 'desc').map((position, index) => {
                         return (
                           <tr key={index}>
                             <td  className="py-1 px-2 border border-zinc-500 capitalize text-left">{position.userid}</td>

@@ -10,8 +10,9 @@ import { orderBy } from "lodash";
 import { Form, Formik, Field } from "formik";
 import Header from "../layout/Header";
 import Sidebar from "../layout/Sidebar";
+import {useReports} from '../utils/useReport'
 
-
+ 
 function Dashboard() {
 
   const [todos, setTodos] = useState([]);
@@ -24,6 +25,7 @@ function Dashboard() {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const {DownloadReport, isLoading} = useReports()
 
   // const ontem = moment
   //   .unix(Timestamp.now().seconds)
@@ -67,6 +69,31 @@ function Dashboard() {
 
 
   const todosOrder = orderBy(todos, ["created_at"], "desc");
+
+  const adminUrl = import.meta.env.VITE_ADMIN_URL;
+
+
+
+  const [hasConnection, setHasConnection] = useState(false)
+
+  async function ping() {
+    await fetch(`${adminUrl}reports/api/ping`)
+      .then((pingResponse) => {
+        setHasConnection(pingResponse.status == 200)
+      })
+  }
+
+  useEffect(() => {
+    console.info('useeffect')
+    if (!hasConnection) {
+      console.log('ping exe')
+      ping()
+    } else {
+      console.log('ping else')
+    }
+  })
+
+  // console.log(todosOrder)
 
   useEffect(() => {
     if (custoUnitario !== 0) {
@@ -217,13 +244,25 @@ function Dashboard() {
             </div>
             <div className="grid grid-cols-12 gap-6">
               <div className="overflow-x-auto col-span-full bg-white shadow-lg rounded-sm border border-slate-200">
-                <header className="px-5 py-4 border-b border-slate-100 flex justify-between">
-                  <h2 className="font-semibold text-slate-800">Clientes</h2>
+                <header className="px-5 py-4 border-b flex justify-evenly border-slate-100 gap-4">
+                  <h2 className="font-semibold text-slate-800 py-2">Clientes</h2>
                   <select className="form-input w-28 capitalize" onInput={(e) => setMes(e.target.value)}>
-                    {selectMes.map((mes,index) => {
-                      return (<option key={index} value={mes}>{moment(mes,"YYYY-MM").format("MMMM")}</option>)
+                    {selectMes.map((mes, index) => {
+                      return (<option key={index} value={mes}>{moment(mes, "YYYY-MM").format("MMMM")}</option>)
                     })}
                   </select>
+                  <div className={`ml-auto border ${isLoading ? 'border-black': ''}`}>
+
+                    <button className="h-11 w-11 pdf" onClick={()=>{DownloadReport('dashboard-pdf', {vendas: todosOrder}, {title: user.email,extension: 'pdf'})}}>
+
+                    </button>
+                    <button className="h-11 w-11 xls" onClick={()=>{DownloadReport('dashboard-xlsx', {vendas: todosOrder}, {title: user.email,extension: 'xlsx'})}}>
+
+                    </button>
+                    <button className="h-11 w-11 csv" onClick={()=>{DownloadReport('dashboard-csv', {vendas: todosOrder}, {title: user.email,extension: 'csv'})}}>
+
+                    </button>
+                  </div>
                 </header>
                 <div className="tabela table border-collapse" ref={parent}>
                   <div

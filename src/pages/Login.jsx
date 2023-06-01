@@ -37,9 +37,9 @@ const LoginPage = () => {
                                     <b>{ error && <Link  to="/dashboard">{error}</Link>}</b>
                                 </div>
                                     <button type="submit" className="btn bg-zinc-400 disabled:bg-red-600" disabled={isSubmitting}>Login</button>
-                                <div className="block text-center mb-3">
+                                {/* <div className="block text-center mb-3">
                                     <small><Link to="/cadastro" >Clique aqui para se cadastrar</Link></small>
-                                </div>
+                                </div> */}
                             </Form>
                         </div>
                     )

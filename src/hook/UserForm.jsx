@@ -23,6 +23,7 @@ export function UserForm({
         <input
           autoFocus
           required
+          placeholder="Digite seu nome"
           type="text"
           className="w-full"
           value={nome}
@@ -31,15 +32,17 @@ export function UserForm({
         <p>E-mail</p>
         <input
           required
+          placeholder="example@email.com"
           className="w-full"
           type="email"
           value={email}
           onChange={e => updateFields({ email: e.target.value })}
         />
-        <p>Password</p>
+        <p>Senha</p>
         <input
           className="w-full"
           required
+          placeholder="Min. 6 caracteres"
           type="password"
           value={password}
           onChange={e => updateFields({ password: e.target.value })}
