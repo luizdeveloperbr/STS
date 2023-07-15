@@ -1,6 +1,8 @@
-import React from 'react';
-
+import React, { useContext } from 'react';
+import { useLayoutContext } from '../contexts/useLayoutContext'
 function Header() {
+
+  const { layoutState, setLayoutState } = useLayoutContext()
 
   return (
     <header className="sticky top-0 bg-white border-b border-slate-200 z-30">
@@ -25,7 +27,8 @@ function Header() {
           </div>
           <div className="flex items-center">
             <hr className="w-px h-6 bg-slate-200 mx-3" />
-              
+            {layoutState.sidebarOpened ? "sim":"não"}
+            <button onClick={() => setLayoutState({toggle: "sidebarOpened"})}>»</button>
           </div>
 
         </div>
