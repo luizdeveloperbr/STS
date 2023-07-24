@@ -10,7 +10,7 @@ function UserMenu() {
 
   const trigger = useRef(null);
   const dropdown = useRef(null);
-
+ 
   const navigate = useNavigate()
   const {logOut, user} = useUserAuth()
 

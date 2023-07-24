@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useLayoutContext } from '../contexts/useLayoutContext'
 function Header() {
 
@@ -17,6 +17,7 @@ function Header() {
               text-slate-500 
               hover:text-slate-600 
               lg:hidden"
+              onClick={() => setLayoutState({toggle: "sidebarOpen"})}
             >
               <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <rect x="4" y="5" width="16" height="2" />
@@ -27,8 +28,8 @@ function Header() {
           </div>
           <div className="flex items-center">
             <hr className="w-px h-6 bg-slate-200 mx-3" />
-            {layoutState.sidebarOpened ? "sim":"não"}
-            <button onClick={() => setLayoutState({toggle: "sidebarOpened"})}>»</button>
+            {layoutState.userMenu ? "sim":"não"}
+            <button onClick={() => setLayoutState({toggle: "userMenu"})}>»</button>
           </div>
 
         </div>
