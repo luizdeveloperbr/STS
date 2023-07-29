@@ -11,7 +11,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <RouterProvider router={
       createBrowserRouter([
         { path:"/",
-          element: <Layout routers={listRoutes} />,
+          element: <Layout />,
           children: listRoutes
         }
         ])
