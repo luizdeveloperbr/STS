@@ -1,10 +1,11 @@
-import React from "react";
-import { useLayoutContext } from '../contexts/useLayoutContext'
+import React, {useContext} from "react";
 import { Link } from "react-router-dom";
+import {layout} from "../layout";
+
 
 function Wrapper({children}) {
         
-  let { layoutState } = useLayoutContext()
+  let {layoutState}  = useContext(layout)
     
   return (
       <div>
@@ -23,7 +24,7 @@ function Wrapper({children}) {
   };
 
 function Header({logo}){
-  let {setLayoutState} = useLayoutContext()
+  let {setLayoutState} = useContext(layout)
   return(
         <div className="flex justify-between mb-10 pr-3 sm:px-2">
           <button
@@ -33,7 +34,7 @@ function Header({logo}){
             onClick={() => setLayoutState({ toggle: "sidebarOpen" })}
           >
             <span className="sr-only">Close sidebar</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="violet" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
           </button>
           <Link to="/" className="block">
             <img src={logo} width={48} height={48} alt="" />
@@ -86,7 +87,7 @@ function MenuList({links}){
 }
 
 function ExpandButton(){
-  let { layoutState, setLayoutState} = useLayoutContext()
+  let { layoutState, setLayoutState} = useContext(layout)
 
   return (
          <div className="pt-3 hidden lg:inline-flex 2xl:hidden justify-end mt-auto">

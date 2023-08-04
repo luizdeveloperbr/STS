@@ -1,14 +1,32 @@
-import React from "react";
+import React, {useReducer, createContext} from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar"
 import { Outlet } from "react-router-dom";
-import { LayoutProvider } from '../contexts/useLayoutContext'
+// import { LayoutProvider } from '../contexts/useLayoutContext'
 import listRouters from "../routers"
 import logo from "../style/icons/logo.png"
 
-const Layout = () => {
+export const layout = createContext()
+
+const INITIAL_STATES = {sidebarOpen: false, sidebarExpanded: false, userMenu: false}
+
+function handlerLayoutChange(state, action){
+
+    let newValue = Object.defineProperty(
+        state,
+        action.toggle,
+        { value: !state[action.toggle] }
+    )
+
+    return {...newValue}
+}
+
+function LayoutContext() {
+
+    const [layoutState, setLayoutState] = useReducer(handlerLayoutChange, INITIAL_STATES)
+
     return (
-        <LayoutProvider>
+        <layout.Provider value={{layoutState, setLayoutState}}>
             <div className="flex h-screen overflow-hidden">
                 <Sidebar.Wrapper>               
                     <Sidebar.Header logo={logo} />
@@ -22,7 +40,7 @@ const Layout = () => {
                     </main>
                 </div>
             </div>
-        </LayoutProvider>
+        </layout.Provider>
     )
 }
-export default Layout
+export default LayoutContext

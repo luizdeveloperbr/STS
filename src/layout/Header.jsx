@@ -1,8 +1,10 @@
-import React from 'react';
-import { useLayoutContext } from '../contexts/useLayoutContext'
+import React, {useContext} from "react";
+import {layout} from "../layout";
+
+
 function Header() {
 
-  const { layoutState, setLayoutState } = useLayoutContext()
+  const { layoutState, setLayoutState } = useContext(layout)
 
   return (
     <header className="sticky top-0 bg-white border-b border-slate-200 z-30">
