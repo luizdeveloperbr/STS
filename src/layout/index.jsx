@@ -2,7 +2,6 @@ import React, {useReducer, createContext} from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar"
 import { Outlet } from "react-router-dom";
-// import { LayoutProvider } from '../contexts/useLayoutContext'
 import listRouters from "../routers"
 import logo from "../style/icons/logo.png"
 

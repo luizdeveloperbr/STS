@@ -10,12 +10,18 @@ function Wrapper({children}) {
   return (
       <div>
         <div
-          className={`fixed inset-0 bg-slate-900 bg-opacity-30 z-40 lg:hidden lg:z-auto transition-opacity duration-200 
+          className={`fixed inset-0 bg-slate-900 bg-opacity-30 z-40 transition-opacity duration-200
+          ${layoutState.sidebarExpanded ? '': 'opacity-100' }
           ${layoutState.sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
           aria-hidden="true"></div>
         <div
           id="sidebar"
-          className={`flex flex-col absolute z-40 left-0 top-0 lg:static lg:left-auto lg:top-auto lg:translate-x-0 h-screen no-scrollbar w-64 lg:w-20 lg:sidebar-expanded:!w-64 2xl:!w-64 shrink-0 bg-slate-800 p-4 transition-all duration-200 ease-in-out ${layoutState.sidebarOpen ? "translate-x-0" : "-translate-x-64"
+          className={`
+          flex flex-col absolute z-40 left-0 top-0 
+          
+          lg:static lg:left-auto lg:top-auto lg:translate-x-0 ${layoutState.sidebarExpanded ? 'lg:w-20':'w-64'} 
+
+          h-screen no-scrollbar w-64 2xl:!w-64 shrink-0 bg-slate-800 p-4 transition-all duration-200 ease-in-out ${layoutState.sidebarOpen ? "translate-x-0" : "-translate-x-64"
             }`}>
               {children}
         </div>
@@ -34,7 +40,7 @@ function Header({logo}){
             onClick={() => setLayoutState({ toggle: "sidebarOpen" })}
           >
             <span className="sr-only">Close sidebar</span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="violet" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="feather feather-arrow-left"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
           </button>
           <Link to="/" className="block">
             <img src={logo} width={48} height={48} alt="" />
@@ -94,10 +100,10 @@ function ExpandButton(){
            <div
              className="px-3 py-2"
            >
-             <button onClick={() => setLayoutState({toggle:"sidebarOpen"})}>
+             <button onClick={() => setLayoutState({toggle:"sidebarExpanded"})}>
                <span className="sr-only">Expand / collapse sidebar</span>
                <svg
-                 className={`w-6 h-6 fill-current ${layoutState.sidebarOpen ? 'rotate-180': ''}`}
+                 className={`w-6 h-6 fill-current ${layoutState.sidebarExpanded ? '': 'rotate-180'}`}
                  viewBox="0 0 24 24">
                  <path
                    className="text-slate-400"
