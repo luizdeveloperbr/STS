@@ -8,12 +8,11 @@ function Wrapper({children}) {
   let {layoutState}  = useContext(layout)
     
   return (
-      <div>
-        <div
-          className={`fixed inset-0 bg-slate-900 bg-opacity-30 z-40 transition-opacity duration-200
-          ${layoutState.sidebarExpanded ? '': 'opacity-100' }
-          ${layoutState.sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
-          aria-hidden="true"></div>
+       //</> <div
+          // className={`fixed inset-0 bg-slate-900 bg-opacity-30 z-40 transition-opacity duration-200
+          // ${layoutState.sidebarExpanded ? '': '2xl:opacity-0' }
+          // ${layoutState.sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+          // aria-hidden="true"></div>
         <div
           id="sidebar"
           className={`
@@ -25,7 +24,6 @@ function Wrapper({children}) {
             }`}>
               {children}
         </div>
-      </div>
     )
   };
 
